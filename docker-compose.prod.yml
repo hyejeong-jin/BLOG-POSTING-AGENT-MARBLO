@@ -1,0 +1,115 @@
+# Production overrides for docker-compose
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
+version: "3.8"
+
+services:
+  postgres:
+    # In production, use RDS instead
+    # This service can be removed and DATABASE_URL should point to RDS endpoint
+    profiles:
+      - local-only
+    
+    environment:
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=200
+        -c shared_buffers=512MB
+        -c effective_cache_size=2GB
+        -c work_mem=4MB
+    
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1G
+        reservations:
+          cpus: "1"
+          memory: 512M
+
+  redis:
+    # In production, use ElastiCache instead
+    # This service can be removed and REDIS_URL should point to ElastiCache endpoint
+    profiles:
+      - local-only
+    
+    command: >
+      redis-server
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --appendonly yes
+      --appendfsync everysec
+      --save 900 1
+      --save 300 10
+    
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+
+  app:
+    # Production build target
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    
+    # Environment variables should be injected from AWS (Secrets Manager, Parameter Store)
+    # Or use .env.production file (should not be in git)
+    env_file:
+      - .env.production
+    
+    # Remove volumes - use RDS and S3 instead of local storage
+    volumes: []
+    
+    # No reload in production
+    command: >
+      gunicorn app.main:app
+      --workers 4
+      --worker-class uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8000
+      --access-logfile -
+      --error-logfile -
+      --log-level info
+      --timeout 120
+      --keep-alive 5
+      --graceful-timeout 30
+    
+    restart: always
+    
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 2G
+        reservations:
+          cpus: "2"
+          memory: 1G
+      
+      # Auto-restart on failure
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 120s
+
+  nginx:
+    # Enable Nginx in production
+    profiles:
+      - production
+    
+    environment:
+      - ENVIRONMENT=production
+      - APP_HOST=app
+      - APP_PORT=8000
+    
+    restart: always
+    
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M

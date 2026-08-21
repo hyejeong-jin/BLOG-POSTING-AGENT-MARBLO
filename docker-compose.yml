@@ -1,0 +1,270 @@
+version: "3.8"
+
+# Docker Compose configuration for Marblo application
+# Development: docker-compose up
+# Production: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
+services:
+  # ============================================================================
+  # PostgreSQL Database
+  # ============================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: marblo-postgres
+    
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-marblo_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-marblo_password}
+      POSTGRES_DB: ${POSTGRES_DB:-marblo_db}
+      POSTGRES_INITDB_ARGS: >
+        -c max_connections=100
+        -c shared_buffers=256MB
+        -c effective_cache_size=1GB
+    
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-marblo_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    
+    restart: unless-stopped
+    
+    networks:
+      - marblo-network
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Resource limits for development
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+
+  # ============================================================================
+  # Redis Cache
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: marblo-redis
+    
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --appendonly yes
+      --appendfsync everysec
+    
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    
+    volumes:
+      - redis_data:/data
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    
+    restart: unless-stopped
+    
+    networks:
+      - marblo-network
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Resource limits for development
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+
+  # ============================================================================
+  # FastAPI Application
+  # ============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${BUILD_TARGET:-development}
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    
+    container_name: marblo-app
+    
+    environment:
+      # Application
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DEBUG: ${DEBUG:-true}
+      APP_NAME: Marblo
+      APP_VERSION: 0.1.0
+      
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-marblo_user}:${POSTGRES_PASSWORD:-marblo_password}@postgres:5432/${POSTGRES_DB:-marblo_db}
+      DATABASE_POOL_SIZE: ${DATABASE_POOL_SIZE:-10}
+      DATABASE_MAX_OVERFLOW: ${DATABASE_MAX_OVERFLOW:-20}
+      
+      # Redis
+      REDIS_URL: redis://redis:6379/0
+      REDIS_CACHE_TTL: ${REDIS_CACHE_TTL:-3600}
+      
+      # AWS
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-marblo-photos}
+      AWS_CLOUDWATCH_LOG_GROUP: ${AWS_CLOUDWATCH_LOG_GROUP:-/marblo/application}
+      
+      # AI Services
+      CLAUDE_API_KEY: ${CLAUDE_API_KEY:-}
+      CLAUDE_MODEL: ${CLAUDE_MODEL:-claude-3-sonnet-20240229}
+      
+      # Email
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-ses}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
+      EMAIL_FROM: ${EMAIL_FROM:-noreply@marblo.com}
+      
+      # Security
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOG_FORMAT: ${LOG_FORMAT:-json}
+      
+      # CORS
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:8000}
+    
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    
+    volumes:
+      - .:/app
+      - /app/__pycache__
+      - /app/.pytest_cache
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    
+    restart: unless-stopped
+    
+    networks:
+      - marblo-network
+    
+    # Development: auto-reload enabled
+    # Production: run command from Dockerfile
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      ${RELOAD_FLAG:---reload}
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+        labels: "marblo.service=app"
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1G
+        reservations:
+          cpus: "1"
+          memory: 512M
+    
+    # Healthcheck
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ============================================================================
+  # Optional: Nginx Reverse Proxy (for production)
+  # ============================================================================
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: marblo-nginx
+    
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    
+    depends_on:
+      - app
+    
+    restart: unless-stopped
+    
+    networks:
+      - marblo-network
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Only start in production
+    profiles:
+      - production
+    
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+# ============================================================================
+# Volumes
+# ============================================================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# ============================================================================
+# Networks
+# ============================================================================
+networks:
+  marblo-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br_marblo
+

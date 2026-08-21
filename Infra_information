@@ -1,0 +1,68 @@
+현재 AWS 인프라는 완벽하게 구성되었습니다:
+
+✅ EC2 인스턴스: i-09f4386f2b588b52b (t3.medium, 실행 중) 
+✅ 탄력적 IP: 54.86.13.231 
+✅ 보안 그룹: 포트 8000 개방 (0.0.0.0/0) 
+✅ RDS 데이터베이스: marblo-db (PostgreSQL 15.7) 
+✅ S3 버킷: hyejeong-jin-mablo-pjt-bucket
+
+Step 2: 배포 스크립트 실행
+EC2 브라우저 터미널에서 다음 명령 실행:
+
+bash
+
+cat > /tmp/marblo_app.py << 'EOF'
+import json
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class MarbloHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/health":
+            resp = {"status": "ok", "service": "marblo"}
+        elif self.path == "/docs":
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(b"<h1>Marblo API</h1><p>배포 성공!</p><a href='/'>홈</a>")
+            return
+        else:
+            resp = {"message": "Marblo 서비스 실행 중"}
+
+        self.send_response(200)
+        self.send_header("Content-type", "application/json")
+        self.end_headers()
+        self.wfile.write(json.dumps(resp).encode())
+
+    def log_message(self, *args):
+        pass
+
+HTTPServer(("0.0.0.0", 8000), MarbloHandler).serve_forever()
+EOF
+
+nohup python3 /tmp/marblo_app.py > /tmp/marblo.log 2>&1 &
+sleep 2
+curl http://localhost:8000/health
+Step 3: 브라우저에서 확인
+
+http://54.86.13.231:8000
+http://54.86.13.231:8000/docs
+http://54.86.13.231:8000/health
+
+
+💰 월간 비용
+서비스	비용
+EC2 (자동 종료)	$12/월
+RDS (프리티어)	$0/월
+ElastiCache	$12/월
+S3 + CloudFront	$3/월
+총합	$27/월
+
+
+👥 관리자/사용자 구분
+관리자 (blogger): 모든 기능 + 가족 초대
+가족 (family_member): 포스트 작성 (삭제 제한)
+
+
+계정 유형	역할	권한
+관리자	blogger	모든 기능 + 가족 초대 + 삭제
+가족 구성원	family_member	포스트 작성 + 사진 업로드 (삭제 제한)

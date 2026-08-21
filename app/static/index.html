@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마블로 - AI 블로그 포스트 생성기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 0.95em;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .result-box h3 {
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .result-box p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .copy-area {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .btn-copy {
+            background: #10b981;
+            color: white;
+            margin-top: 12px;
+            width: 100%;
+        }
+        
+        .btn-copy:hover {
+            background: #059669;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .success {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+        
+        .step {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            background: #e0e0e0;
+            border-radius: 50%;
+            margin-bottom: 8px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .step.active .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .step-name {
+            color: #666;
+            font-size: 0.85em;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-input-label {
+            display: block;
+            padding: 20px;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9ff;
+        }
+        
+        .file-input-label:hover {
+            background: #f0f0ff;
+            border-color: #764ba2;
+        }
+        
+        .file-input-label.active {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        
+        .auth-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .auth-link a {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ 마블로</h1>
+            <p>AI가 만드는 블로그 포스트 - 10분 완성</p>
+        </div>
+        
+        <div class="content">
+            <!-- 로그인 페이지 -->
+            <div id="loginPage" class="page active">
+                <h2>로그인</h2>
+                <div class="form-group">
+                    <label>이메일</label>
+                    <input type="email" id="loginEmail" placeholder="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <input type="password" id="loginPassword" placeholder="비밀번호 입력">
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="login()">로그인</button>
+                </div>
+                <div class="auth-link">
+                    계정이 없으신가요? <a onclick="goPage('registerPage')">가입하기</a>
+                </div>
+            </div>
+            
+            <!-- 가입 페이지 -->
+            <div id="registerPage" class="page">
+                <h2>회원가입</h2>
+                <div class="form-group">
+                    <label>이메일</label>
+                    <input type="email" id="registerEmail" placeholder="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label>사용자명</label>
+                    <input type="text" id="registerUsername" placeholder="사용자명">
+                </div>
+                <div class="form-group">
+                    <label>이름</label>
+                    <input type="text" id="registerName" placeholder="이름">
+                </div>
+                <div class="form-group">
+                    <label>비밀번호 (12자 이상)</label>
+                    <input type="password" id="registerPassword" placeholder="비밀번호 입력">
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="register()">가입</button>
+                    <button class="btn-secondary" onclick="goPage('loginPage')">로그인 페이지</button>
+                </div>
+            </div>
+            
+            <!-- 블로그 학습 페이지 -->
+            <div id="learnPage" class="page">
+                <div class="step-indicator">
+                    <div class="step active"><div class="step-number">1</div><div class="step-name">스타일 학습</div></div>
+                    <div class="step"><div class="step-number">2</div><div class="step-name">사진 업로드</div></div>
+                    <div class="step"><div class="step-number">3</div><div class="step-name">포스트 생성</div></div>
+                </div>
+                
+                <h2>블로그 스타일 학습</h2>
+                <p style="color: #666; margin-bottom: 20px;">네이버 블로그 URL을 입력하면 당신의 글쓰기 스타일을 학습합니다.</p>
+                
+                <div class="form-group">
+                    <label>블로그 URL</label>
+                    <input type="text" id="blogUrl" placeholder="https://blog.naver.com/your_blog_name">
+                </div>
+                
+                <div class="form-group">
+                    <label>분석할 글 개수</label>
+                    <input type="number" id="postsCount" value="5" min="1" max="20">
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-primary" onclick="learnBlog()">스타일 학습 시작</button>
+                </div>
+                
+                <div id="learnResult"></div>
+            </div>
+            
+            <!-- 사진 업로드 페이지 -->
+            <div id="uploadPage" class="page">
+                <div class="step-indicator">
+                    <div class="step"><div class="step-number">1</div><div class="step-name">스타일 학습</div></div>
+                    <div class="step active"><div class="step-number">2</div><div class="step-name">사진 업로드</div></div>
+                    <div class="step"><div class="step-number">3</div><div class="step-name">포스트 생성</div></div>
+                </div>
+                
+                <h2>사진 업로드</h2>
+                <p style="color: #666; margin-bottom: 20px;">포스트에 사용할 사진들을 업로드합니다.</p>
+                
+                <div class="form-group">
+                    <label>사진 선택</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="photoInput" accept="image/*" onchange="handleFileSelect()">
+                        <label for="photoInput" class="file-input-label">
+                            클릭하여 사진 선택<br>
+                            <span style="font-size: 0.9em; color: #999;">JPG, PNG, GIF 지원</span>
+                        </label>
+                    </div>
+                    <div id="selectedPhotos" style="margin-top: 15px;"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>포스트 주제 (선택사항)</label>
+                    <input type="text" id="topic" placeholder="예: 대출에 대해 알아보자">
+                </div>
+                
+                <div class="form-group">
+                    <label>추가 정보 (선택사항)</label>
+                    <textarea id="additionalContext" placeholder="포스트에 포함할 추가 정보를 입력하세요"></textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="goPage('learnPage')">뒤로</button>
+                    <button class="btn-primary" onclick="generatePost()">포스트 생성</button>
+                </div>
+            </div>
+            
+            <!-- 결과 페이지 -->
+            <div id="resultPage" class="page">
+                <div class="step-indicator">
+                    <div class="step"><div class="step-number">1</div><div class="step-name">스타일 학습</div></div>
+                    <div class="step"><div class="step-number">2</div><div class="step-name">사진 업로드</div></div>
+                    <div class="step active"><div class="step-number">3</div><div class="step-name">포스트 생성</div></div>
+                </div>
+                
+                <h2>생성된 포스트</h2>
+                <p style="color: #666; margin-bottom: 20px;">아래 포스트를 복사하여 블로그에 붙여넣기 하세요.</p>
+                
+                <div id="generatedPost"></div>
+                
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="goPage('uploadPage')">다시 생성</button>
+                    <button class="btn-primary" onclick="goPage('dashboardPage')">대시보드</button>
+                </div>
+            </div>
+            
+            <!-- 대시보드 -->
+            <div id="dashboardPage" class="page">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2>마이 포스트</h2>
+                    <button class="btn-primary" style="width: auto;" onclick="goPage('uploadPage')">새 포스트 생성</button>
+                </div>
+                
+                <div id="postsList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // API 설정
+        const API_BASE = '/api/v1';
+        let accessToken = localStorage.getItem('access_token');
+        let currentUserId = localStorage.getItem('user_id');
+        
+        // 페이지 이동
+        function goPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+        
+        // 인증 확인
+        function checkAuth() {
+            if (!accessToken) {
+                goPage('loginPage');
+            } else {
+                goPage('learnPage');
+            }
+        }
+        
+        // 로그인
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('이메일과 비밀번호를 입력하세요');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    accessToken = data.access_token;
+                    currentUserId = data.user_id;
+                    localStorage.setItem('access_token', accessToken);
+                    localStorage.setItem('user_id', currentUserId);
+                    goPage('learnPage');
+                } else {
+                    alert(data.detail || '로그인 실패');
+                }
+            } catch (error) {
+                alert('로그인 중 오류 발생: ' + error.message);
+            }
+        }
+        
+        // 회원가입
+        async function register() {
+            const email = document.getElementById('registerEmail').value;
+            const username = document.getElementById('registerUsername').value;
+            const name = document.getElementById('registerName').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (!email || !username || !name || !password) {
+                alert('모든 필드를 입력하세요');
+                return;
+            }
+            
+            if (password.length < 12) {
+                alert('비밀번호는 12자 이상이어야 합니다');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, username, name, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('회원가입 성공! 로그인하세요');
+                    goPage('loginPage');
+                } else {
+                    alert(data.detail || '회원가입 실패');
+                }
+            } catch (error) {
+                alert('회원가입 중 오류 발생: ' + error.message);
+            }
+        }
+        
+        // 블로그 학습
+        async function learnBlog() {
+            const blogUrl = document.getElementById('blogUrl').value;
+            const postsCount = parseInt(document.getElementById('postsCount').value);
+            
+            if (!blogUrl) {
+                alert('블로그 URL을 입력하세요');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('learnResult');
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>블로그 스타일을 학습 중입니다...</p></div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/marblo/learn-blog`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({
+                        blog_url: blogUrl,
+                        posts_to_analyze: postsCount
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <p><strong>✓ 스타일 학습 완료!</strong></p>
+                            <p>${data.posts_analyzed}개의 글을 분석했습니다 (신뢰도: ${data.confidence_score}%)</p>
+                        </div>
+                    `;
+                    setTimeout(() => goPage('uploadPage'), 1500);
+                } else {
+                    resultDiv.innerHTML = `<div class="error"><strong>오류:</strong> ${data.detail}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><strong>오류:</strong> ${error.message}</div>`;
+            }
+        }
+        
+        // 사진 선택
+        function handleFileSelect() {
+            const input = document.getElementById('photoInput');
+            const selectedDiv = document.getElementById('selectedPhotos');
+            
+            if (input.files.length > 0) {
+                selectedDiv.innerHTML = `<p style="color: #10b981;">✓ ${input.files.length}개의 사진 선택됨</p>`;
+                document.querySelector('.file-input-label').classList.add('active');
+            }
+        }
+        
+        // 포스트 생성
+        async function generatePost() {
+            const fileInput = document.getElementById('photoInput');
+            const topic = document.getElementById('topic').value;
+            
+            if (fileInput.files.length === 0) {
+                alert('사진을 선택하세요');
+                return;
+            }
+            
+            // MVP: 간단히 mock photo IDs 사용
+            const photoIds = Array.from(fileInput.files).map((_, i) => {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            });
+            
+            goPage('resultPage');
+            const resultDiv = document.getElementById('generatedPost');
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>포스트를 생성 중입니다...</p></div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/marblo/generate-post`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({
+                        photo_ids: photoIds,
+                        topic: topic || undefined,
+                        additional_context: document.getElementById('additionalContext').value || undefined
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const copyText = `${data.title}\n\n${data.content}`;
+                    resultDiv.innerHTML = `
+                        <div class="result-box">
+                            <h3>${data.title}</h3>
+                            <div class="copy-area">${copyText}</div>
+                            <button class="btn-copy" onclick="copyToClipboard('${copyText.replace(/'/g, "\\'")}')">복사하기</button>
+                            <p style="color: #999; font-size: 0.9em; margin-top: 10px;">단어 수: ${data.word_count}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error"><strong>오류:</strong> ${data.detail}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><strong>오류:</strong> ${error.message}</div>`;
+            }
+        }
+        
+        // 복사하기
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('포스트가 복사되었습니다!');
+            }).catch(err => {
+                alert('복사 실패: ' + err);
+            });
+        }
+        
+        // 포스트 목록 로드
+        async function loadPosts() {
+            goPage('dashboardPage');
+            const listDiv = document.getElementById('postsList');
+            
+            try {
+                const response = await fetch(`${API_BASE}/marblo/posts/list`, {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.posts.length > 0) {
+                    listDiv.innerHTML = data.posts.map(post => `
+                        <div class="result-box" style="margin-bottom: 15px;">
+                            <h3>${post.title}</h3>
+                            <p>상태: <strong>${post.status}</strong> | 단어 수: <strong>${post.word_count}</strong></p>
+                            <p style="font-size: 0.9em; color: #999;">생성일: ${new Date(post.created_at).toLocaleDateString('ko-KR')}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    listDiv.innerHTML = '<p style="text-align: center; color: #999;">생성된 포스트가 없습니다</p>';
+                }
+            } catch (error) {
+                listDiv.innerHTML = `<div class="error">포스트 로드 실패: ${error.message}</div>`;
+            }
+        }
+        
+        // 로그아웃
+        function logout() {
+            accessToken = null;
+            currentUserId = null;
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user_id');
+            checkAuth();
+        }
+        
+        // 초기화
+        window.addEventListener('load', checkAuth);
+    </script>
+</body>
+</html>

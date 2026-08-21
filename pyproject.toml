@@ -1,0 +1,122 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "marblo"
+version = "0.1.0"
+description = "AI-powered blog post generation service for information-delivery bloggers"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Marblo Team", email = "dev@marblo.com"}
+]
+
+dependencies = [
+    # Web Framework
+    "fastapi==0.104.1",
+    "uvicorn[standard]==0.24.0",
+    "python-multipart==0.0.6",
+    
+    # Database
+    "sqlalchemy==2.0.23",
+    "psycopg2-binary==2.9.9",
+    "alembic==1.13.0",
+    "aiosqlite==0.19.0",
+    
+    # Data Validation
+    "pydantic==2.5.0",
+    "pydantic-settings==2.1.0",
+    
+    # AWS Services
+    "boto3==1.29.7",
+    "botocore==1.32.7",
+    
+    # Security & Authentication
+    "python-jose[cryptography]==3.3.0",
+    "bcrypt==4.1.1",
+    "passlib[bcrypt]==1.7.4",
+    
+    # Logging & Monitoring
+    "structlog==23.2.0",
+    "python-json-logger==2.0.7",
+    "watchtower==3.0.1",  # CloudWatch support
+    
+    # HTTP & Networking
+    "httpx==0.25.2",
+    "aiohttp==3.9.1",
+    
+    # Rate Limiting
+    "slowapi==0.1.9",
+    
+    # Caching
+    "redis==5.0.1",
+    
+    # Async Support
+    "asyncpg==0.29.0",
+    
+    # Environment Configuration
+    "python-dotenv==1.0.0",
+    
+    # Utilities
+    "pytz==2023.3",
+    "python-dateutil==2.8.2",
+    "Pillow==10.1.0",  # Image processing
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==7.4.3",
+    "pytest-asyncio==0.21.1",
+    "pytest-cov==4.1.0",
+    "black==23.12.0",
+    "flake8==6.1.0",
+    "isort==5.13.2",
+    "mypy==1.7.1",
+    "pylint==3.0.3",
+    "pre-commit==3.5.0",
+]
+
+[project.urls]
+Repository = "https://github.com/marblo/marblo"
+Documentation = "https://docs.marblo.com"
+Issues = "https://github.com/marblo/marblo/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["BLOG-POSTING-AGENT/app"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip_gitignore = true
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
