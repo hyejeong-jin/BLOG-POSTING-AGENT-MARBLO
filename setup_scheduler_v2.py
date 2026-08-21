@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 import json
 from datetime import datetime
 
@@ -13,12 +13,12 @@ ssm = boto3.client('ssm', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_
 
 instance_id = "i-09f4386f2b588b52b"
 
-print("\n? EC2 ÀÎ½ºÅÏ½º ½ºÄÉÁÙ ¼³Á¤ Áß...")
-print("   - Á¾·á: ¸ÅÀÏ ÀÚÁ¤ (00:00 KST = 15:00 UTC)")
-print("   - ½ÃÀÛ: ¸ÅÀÏ ¿ÀÀü 10½Ã (10:00 KST = 01:00 UTC)")
+print("\n? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
+print("   - ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (00:00 KST = 15:00 UTC)")
+print("   - ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 10ï¿½ï¿½ (10:00 KST = 01:00 UTC)")
 
-# EC2 Systems Manager Document »ý¼º (Stop)
-print("\n1??  Systems Manager ¹®¼­ »ý¼º...")
+# EC2 Systems Manager Document ï¿½ï¿½ï¿½ï¿½ (Stop)
+print("\n1??  Systems Manager ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 try:
     ssm_doc_stop = {
         "schemaVersion": "2.2",
@@ -42,29 +42,29 @@ try:
         DocumentType='Command',
         DocumentFormat='JSON'
     )
-    print(f"? Systems Manager ¹®¼­: marblo-stop-ec2")
+    print(f"? Systems Manager ï¿½ï¿½ï¿½ï¿½: marblo-stop-ec2")
 except Exception as e:
     if 'already exists' in str(e):
-        print(f"? ¹®¼­ ÀÌ¹Ì Á¸Àç: marblo-stop-ec2")
+        print(f"? ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: marblo-stop-ec2")
     else:
-        print(f"??  ¿À·ù: {e}")
+        print(f"??  ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# EventBridge ±ÔÄ¢ ¼öÁ¤ (Á¤È®ÇÑ ARN »ç¿ë)
-print("\n2??  EventBridge ½ºÄÉÁÙ ¼³Á¤...")
+# EventBridge ï¿½ï¿½Ä¢ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½È®ï¿½ï¿½ ARN ï¿½ï¿½ï¿½)
+print("\n2??  EventBridge ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 
-# Á¾·á ½ºÄÉÁÙ ±ÔÄ¢ ¾÷µ¥ÀÌÆ®
+# ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¢ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 try:
     events.put_rule(
         Name='marblo-stop-ec2-schedule',
-        ScheduleExpression='cron(0 15 * * ? *)',  # ¸ÅÀÏ 15:00 UTC (ÀÚÁ¤ KST)
+        ScheduleExpression='cron(0 15 * * ? *)',  # ï¿½ï¿½ï¿½ï¿½ 15:00 UTC (ï¿½ï¿½ï¿½ï¿½ KST)
         State='ENABLED',
         Description='Stop EC2 at midnight KST'
     )
-    print(f"? ½ºÄÉÁÙ ±ÔÄ¢: marblo-stop-ec2-schedule (ÀÚÁ¤)")
+    print(f"? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¢: marblo-stop-ec2-schedule (ï¿½ï¿½ï¿½ï¿½)")
 except Exception as e:
-    print(f"??  ±ÔÄ¢ »ý¼º ¿À·ù: {e}")
+    print(f"??  ï¿½ï¿½Ä¢ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# SSM È£Ãâ·Î º¯°æ
+# SSM È£ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 try:
     events.put_targets(
         Rule='marblo-stop-ec2-schedule',
@@ -75,28 +75,28 @@ try:
             'EcsParameters': {}
         }]
     )
-    print(f"? ´ë»ó ¼³Á¤ ¿Ï·á")
+    print(f"? ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
 except Exception as e:
-    # °£´ÜÇÑ ¹æ¹ý: Á÷Á¢ EC2 stop È£Ãâ
+    # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ EC2 stop È£ï¿½ï¿½
     try:
         ec2.stop_instances(InstanceIds=[instance_id])
-        print(f"? EC2 Stop ¸í·É Å×½ºÆ® ¿Ï·á")
+        print(f"? EC2 Stop ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ® ï¿½Ï·ï¿½")
     except Exception as e2:
-        print(f"??  ¿À·ù: {e2}")
+        print(f"??  ï¿½ï¿½ï¿½ï¿½: {e2}")
 
 print(f"\n{'='*80}")
-print(f"? EC2 ½ºÄÉÁÙ ¼³Á¤ ¿Ï·á!")
+print(f"? EC2 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
 print(f"{'='*80}")
 print(f"""
-?? ½ºÄÉÁÙ:
-   - Á¾·á: ¸ÅÀÏ ÀÚÁ¤ (00:00 KST)
-   - ½ÃÀÛ: ¸ÅÀÏ ¿ÀÀü 10½Ã (10:00 KST)
-   - ¿î¿µ ½Ã°£: 10½Ã°£/ÀÏ (10:00-00:00)
+?? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:
+   - ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (00:00 KST)
+   - ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 10ï¿½ï¿½ (10:00 KST)
+   - ï¿½î¿µ ï¿½Ã°ï¿½: 10ï¿½Ã°ï¿½/ï¿½ï¿½ (10:00-00:00)
 
-?? ºñ¿ë Àý°¨:
-   - EC2 ¿î¿µ ½Ã°£: 10½Ã°£/ÀÏ ¡¿ 30ÀÏ = 300½Ã°£/¿ù
-   - EC2 ºñ¿ë: $12/¿ù (±âÁ¸ $30¿¡¼­ 60% °¨¼Ò)
-   - ¿ù°£ Àý°¨¾×: $18
+?? ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:
+   - EC2 ï¿½î¿µ ï¿½Ã°ï¿½: 10ï¿½Ã°ï¿½/ï¿½ï¿½ ï¿½ï¿½ 30ï¿½ï¿½ = 300ï¿½Ã°ï¿½/ï¿½ï¿½
+   - EC2 ï¿½ï¿½ï¿½: $12/ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ $30ï¿½ï¿½ï¿½ï¿½ 60% ï¿½ï¿½ï¿½ï¿½)
+   - ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: $18
 """)
 
 

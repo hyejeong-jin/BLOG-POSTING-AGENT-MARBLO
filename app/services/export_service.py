@@ -1,4 +1,4 @@
-"""
+﻿"""
 Blog Post Export and Publishing Service.
 
 This service handles exporting posts to various formats and publishing to external platforms.
@@ -175,9 +175,9 @@ class ExportService:
         <div class="header">
             <h1 class="title">{post.title}</h1>
             <div class="meta">
-                <p>?�성?? {post.created_at.strftime('%Y-%m-%d %H:%M')}</p>
+                <p>?�성?? {post.created_at.strftime('%Y-%m-%d %H:%M')}</p>
                 <p>카테고리: {post.category or 'General'}</p>
-                {f'<p>?�그: {", ".join(post.tags)}</p>' if post.tags else ''}
+                {f'<p>?�그: {", ".join(post.tags)}</p>' if post.tags else ''}
             </div>
         </div>
         
@@ -218,11 +218,11 @@ class ExportService:
         # Build text
         text = f"""{post.title}
 
-?�성?? {post.created_at.strftime('%Y-%m-%d %H:%M')}
+?�성?? {post.created_at.strftime('%Y-%m-%d %H:%M')}
 카테고리: {post.category or 'General'}
-{f'?�그: {", ".join(post.tags)}' if post.tags else ''}
+{f'?�그: {", ".join(post.tags)}' if post.tags else ''}
 
-?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━
+?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━?�━
 
 {post.body}
 

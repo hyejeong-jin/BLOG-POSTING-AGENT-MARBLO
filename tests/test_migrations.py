@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for database migration setup.
 
 Tests that:

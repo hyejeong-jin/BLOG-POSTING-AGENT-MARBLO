@@ -1,8 +1,8 @@
-import boto3
+ï»¿import boto3
 from datetime import datetime
 import time
 
-# AWS ÀÚ°ÝÁõ¸í
+# AWS ï¿½Ú°ï¿½ï¿½ï¿½ï¿½ï¿½
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
 REGION = "us-east-1"
@@ -20,40 +20,40 @@ CONFIG = {
 }
 
 print("\n" + "=" * 80)
-print("?? Marblo AWS ÄÄÇ»ÆÃ/DB ¹èÆ÷")
+print("?? Marblo AWS ï¿½ï¿½Ç»ï¿½ï¿½/DB ï¿½ï¿½ï¿½ï¿½")
 print("=" * 80)
 
 ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 rds = boto3.client('rds', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
-# 1. ¼­ºê³Ý »ý¼º
-print("\n?? Step 1: ¼­ºê³Ý »ý¼º/È®ÀÎ")
+# 1. ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n?? Step 1: ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½/È®ï¿½ï¿½")
 try:
     subnets = ec2.describe_subnets(Filters=[{'Name': 'vpc-id', 'Values': [CONFIG['vpc_id']]}])
     if subnets['Subnets']:
         subnet_id = subnets['Subnets'][0]['SubnetId']
-        print(f"? ¼­ºê³Ý ÀÌ¹Ì Á¸Àç: {subnet_id}")
+        print(f"? ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {subnet_id}")
     else:
-        # °¡¿ë ¿µ¿ª È®ÀÎ
+        # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
         azs_resp = ec2.describe_availability_zones()
         az1 = azs_resp['AvailabilityZones'][0]['ZoneName']
         
         subnet = ec2.create_subnet(VpcId=CONFIG['vpc_id'], CidrBlock='10.0.1.0/24', AvailabilityZone=az1)
         subnet_id = subnet['Subnet']['SubnetId']
-        print(f"? ¼­ºê³Ý »ý¼º: {subnet_id}")
+        print(f"? ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {subnet_id}")
 except Exception as e:
-    print(f"??  ¼­ºê³Ý ¿À·ù: {e}")
+    print(f"??  ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 2. EC2 ÀÎ½ºÅÏ½º »ý¼º
-print("\n???  Step 2: EC2 ÀÎ½ºÅÏ½º »ý¼º/È®ÀÎ")
+# 2. EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n???  Step 2: EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½/È®ï¿½ï¿½")
 try:
     instances = ec2.describe_instances(Filters=[{'Name': 'tag:Name', 'Values': [f'{CONFIG["app_name"]}-instance']}, {'Name': 'instance-state-name', 'Values': ['running', 'stopped']}])
     if instances['Reservations'] and instances['Reservations'][0]['Instances']:
         instance_id = instances['Reservations'][0]['Instances'][0]['InstanceId']
         instance_ip = instances['Reservations'][0]['Instances'][0].get('PublicIpAddress', 'N/A')
-        print(f"? EC2 ÀÎ½ºÅÏ½º ÀÌ¹Ì Á¸Àç: {instance_id} ({instance_ip})")
+        print(f"? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {instance_id} ({instance_ip})")
     else:
-        # Ubuntu 22.04 LTS AMI (¹«·á °èÃþ)
+        # Ubuntu 22.04 LTS AMI (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         response = ec2.run_instances(
             ImageId='ami-0c55b159cbfafe1f0',  # Ubuntu 22.04 LTS (us-east-1)
             MinCount=1,
@@ -70,31 +70,31 @@ try:
             }]
         )
         instance_id = response['Instances'][0]['InstanceId']
-        print(f"? EC2 ÀÎ½ºÅÏ½º »ý¼º Áß: {instance_id}")
-        print(f"   ? ÀÎ½ºÅÏ½º ½ÃÀÛ ´ë±â Áß (1-2ºÐ)...")
+        print(f"? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½: {instance_id}")
+        print(f"   ? ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ (1-2ï¿½ï¿½)...")
         
-        # ÀÎ½ºÅÏ½º ½ÇÇà ´ë±â
+        # ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         waiter = ec2.get_waiter('instance_running')
         waiter.wait(InstanceIds=[instance_id])
         
-        # °ø°³ IP È®ÀÎ
+        # ï¿½ï¿½ï¿½ï¿½ IP È®ï¿½ï¿½
         instances = ec2.describe_instances(InstanceIds=[instance_id])
         instance_ip = instances['Reservations'][0]['Instances'][0]['PublicIpAddress']
-        print(f"? EC2 ÀÎ½ºÅÏ½º ½ÇÇà: {instance_id}")
-        print(f"   °ø°³ IP: {instance_ip}")
+        print(f"? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½: {instance_id}")
+        print(f"   ï¿½ï¿½ï¿½ï¿½ IP: {instance_ip}")
 except Exception as e:
-    print(f"? EC2 ¿À·ù: {e}")
+    print(f"? EC2 ï¿½ï¿½ï¿½ï¿½: {e}")
     instance_ip = None
 
-# 3. RDS ¼­ºê³Ý ±×·ì »ý¼º
-print("\n?? Step 3: RDS ¼­ºê³Ý ±×·ì »ý¼º/È®ÀÎ")
+# 3. RDS ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n?? Step 3: RDS ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½/È®ï¿½ï¿½")
 try:
     db_subnet_groups = rds.describe_db_subnet_groups()
     existing = [g for g in db_subnet_groups.get('DBSubnetGroups', []) if g['DBSubnetGroupName'] == f'{CONFIG["app_name"]}-db-subnet-group']
     if existing:
-        print(f"? RDS ¼­ºê³Ý ±×·ì ÀÌ¹Ì Á¸Àç: {CONFIG['app_name']}-db-subnet-group")
+        print(f"? RDS ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {CONFIG['app_name']}-db-subnet-group")
     else:
-        # Ãß°¡ ¼­ºê³Ý »ý¼º
+        # ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         azs_resp = ec2.describe_availability_zones()
         az2 = azs_resp['AvailabilityZones'][1]['ZoneName']
         
@@ -106,24 +106,24 @@ try:
             DBSubnetGroupDescription='DB Subnet Group for Marblo',
             SubnetIds=[subnet_id, subnet_id_2]
         )
-        print(f"? RDS ¼­ºê³Ý ±×·ì »ý¼º: {CONFIG['app_name']}-db-subnet-group")
+        print(f"? RDS ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½: {CONFIG['app_name']}-db-subnet-group")
 except Exception as e:
-    print(f"??  RDS ¼­ºê³Ý ±×·ì ¿À·ù: {e}")
+    print(f"??  RDS ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 4. RDS µ¥ÀÌÅÍº£ÀÌ½º »ý¼º
-print("\n?? Step 4: RDS µ¥ÀÌÅÍº£ÀÌ½º »ý¼º/È®ÀÎ")
+# 4. RDS ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n?? Step 4: RDS ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½/È®ï¿½ï¿½")
 try:
     db_instances = rds.describe_db_instances()
     existing = [d for d in db_instances.get('DBInstances', []) if d['DBInstanceIdentifier'] == f'{CONFIG["app_name"]}-db']
     if existing:
-        print(f"? RDS ÀÎ½ºÅÏ½º ÀÌ¹Ì Á¸Àç: {CONFIG['app_name']}-db")
+        print(f"? RDS ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {CONFIG['app_name']}-db")
         db_endpoint = existing[0].get('Endpoint', {}).get('Address', 'N/A')
-        print(f"   ¿£µåÆ÷ÀÎÆ®: {db_endpoint}")
+        print(f"   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®: {db_endpoint}")
     else:
-        print(f"   RDS ÀÎ½ºÅÏ½º »ý¼º Áß (5-10ºÐ ¼Ò¿ä)...")
+        print(f"   RDS ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ (5-10ï¿½ï¿½ ï¿½Ò¿ï¿½)...")
         rds.create_db_instance(
             DBInstanceIdentifier=f'{CONFIG["app_name"]}-db',
-            DBInstanceClass='db.t3.micro',  # ÇÁ¸®Æ¼¾î
+            DBInstanceClass='db.t3.micro',  # ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½
             Engine='postgres',
             EngineVersion='15.4',
             MasterUsername=CONFIG['db_user'],
@@ -144,29 +144,29 @@ try:
                 {'Key': 'Environment', 'Value': CONFIG['environment']}
             ]
         )
-        print(f"? RDS ÀÎ½ºÅÏ½º »ý¼º ½ÃÀÛ: {CONFIG['app_name']}-db")
-        print(f"   ? µ¥ÀÌÅÍº£ÀÌ½º ÃÊ±âÈ­ Áß (5-10ºÐ ¼Ò¿ä)...")
+        print(f"? RDS ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {CONFIG['app_name']}-db")
+        print(f"   ? ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ (5-10ï¿½ï¿½ ï¿½Ò¿ï¿½)...")
 except Exception as e:
-    print(f"? RDS ¿À·ù: {e}")
+    print(f"? RDS ï¿½ï¿½ï¿½ï¿½: {e}")
 
 print("\n" + "=" * 80)
-print("? EC2/RDS ¹èÆ÷ ¿Ï·á!")
+print("? EC2/RDS ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
 print("=" * 80)
 if instance_ip:
     print(f"""
-?? ¹èÆ÷ Á¤º¸:
-  EC2 ÀÎ½ºÅÏ½º: {instance_id}
-  °ø°³ IP: {instance_ip}
+?? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:
+  EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½: {instance_id}
+  ï¿½ï¿½ï¿½ï¿½ IP: {instance_ip}
   SSH: ssh -i your-key.pem ubuntu@{instance_ip}
   API: http://{instance_ip}:8000
   
-RDS µ¥ÀÌÅÍº£ÀÌ½º: {CONFIG["app_name"]}-db
-  »ç¿ëÀÚ: {CONFIG['db_user']}
-  ºñ¹Ð¹øÈ£: ????????????
-  µ¥ÀÌÅÍº£ÀÌ½º¸í: {CONFIG['db_name']}
+RDS ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½: {CONFIG["app_name"]}-db
+  ï¿½ï¿½ï¿½ï¿½ï¿½: {CONFIG['db_user']}
+  ï¿½ï¿½Ð¹ï¿½È£: ????????????
+  ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ï¿½ï¿½: {CONFIG['db_name']}
 
-? RDS ÃÊ±âÈ­ ¿Ï·á ´ë±â Áß...
-   AWS ÄÜ¼Ö¿¡¼­ »óÅÂ¸¦ È®ÀÎÇÏ¼¼¿ä.
+? RDS ï¿½Ê±ï¿½È­ ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½...
+   AWS ï¿½Ü¼Ö¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ È®ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.
 """)
 print("=" * 80)
 

@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 import json
 
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
@@ -12,13 +12,13 @@ iam = boto3.client('iam', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SE
 
 instance_id = "i-09f4386f2b588b52b"
 
-print("\n? EC2 ÀÎ½ºÅÏ½º ½ºÄÉÁÙ ¼³Á¤ Áß...")
-print("   - Á¾·á: ÀÚÁ¤ (00:00 KST = 15:00 UTC)")
-print("   - ½ÃÀÛ: ¿ÀÀü 10½Ã (10:00 KST = 01:00 UTC)")
-print("   - Àý°¨: EC2 ºñ¿ë 60% °¨¼Ò ($30 ¡æ $12/¿ù)")
+print("\n? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
+print("   - ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ (00:00 KST = 15:00 UTC)")
+print("   - ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ 10ï¿½ï¿½ (10:00 KST = 01:00 UTC)")
+print("   - ï¿½ï¿½ï¿½ï¿½: EC2 ï¿½ï¿½ï¿½ 60% ï¿½ï¿½ï¿½ï¿½ ($30 ï¿½ï¿½ $12/ï¿½ï¿½)")
 
-# 1. IAM ¿ªÇÒ »ý¼º
-print("\n1??  IAM ¿ªÇÒ »ý¼º...")
+# 1. IAM ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n1??  IAM ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 try:
     trust_policy = {
         "Version": "2012-10-17",
@@ -39,9 +39,9 @@ try:
         Description='Role for EC2 scheduler Lambda'
     )
     role_arn = role['Role']['Arn']
-    print(f"? IAM ¿ªÇÒ »ý¼º: {role_arn}")
+    print(f"? IAM ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {role_arn}")
     
-    # EC2 Á¦¾î ±ÇÇÑ Ãß°¡
+    # EC2 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
     iam.put_role_policy(
         RoleName='marblo-ec2-scheduler-role',
         PolicyName='EC2ControlPolicy',
@@ -59,17 +59,17 @@ try:
             ]
         })
     )
-    print(f"? EC2 Á¦¾î ±ÇÇÑ Ãß°¡")
+    print(f"? EC2 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½")
     
 except Exception as e:
-    print(f"??  IAM ¿À·ù: {e}")
+    print(f"??  IAM ï¿½ï¿½ï¿½ï¿½: {e}")
     role_arn = None
 
-# 2. Lambda ÇÔ¼ö »ý¼º
+# 2. Lambda ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 if role_arn:
-    print("\n2??  Lambda ÇÔ¼ö »ý¼º...")
+    print("\n2??  Lambda ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½...")
     
-    # Á¾·á ÇÔ¼ö
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     stop_code = f"""
 import boto3
 
@@ -81,7 +81,7 @@ def lambda_handler(event, context):
     return {{'statusCode': 200, 'body': f'Stopped {{instance_id}}'}}
 """
     
-    # ½ÃÀÛ ÇÔ¼ö
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
     start_code = f"""
 import boto3
 
@@ -94,7 +94,7 @@ def lambda_handler(event, context):
 """
     
     try:
-        # Á¾·á ÇÔ¼ö
+        # ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
         lambda_client.create_function(
             FunctionName='marblo-stop-ec2',
             Runtime='python3.9',
@@ -103,9 +103,9 @@ def lambda_handler(event, context):
             Code={'ZipFile': stop_code.encode()},
             Description='Stop Marblo EC2 instance at midnight'
         )
-        print(f"? Lambda ÇÔ¼ö »ý¼º: marblo-stop-ec2")
+        print(f"? Lambda ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½: marblo-stop-ec2")
         
-        # ½ÃÀÛ ÇÔ¼ö
+        # ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
         lambda_client.create_function(
             FunctionName='marblo-start-ec2',
             Runtime='python3.9',
@@ -114,25 +114,25 @@ def lambda_handler(event, context):
             Code={'ZipFile': start_code.encode()},
             Description='Start Marblo EC2 instance at 10 AM'
         )
-        print(f"? Lambda ÇÔ¼ö »ý¼º: marblo-start-ec2")
+        print(f"? Lambda ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½: marblo-start-ec2")
         
     except Exception as e:
-        print(f"??  Lambda ¿À·ù: {e}")
+        print(f"??  Lambda ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 3. EventBridge ½ºÄÉÁÙ »ý¼º
-print("\n3??  EventBridge ½ºÄÉÁÙ »ý¼º...")
+# 3. EventBridge ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n3??  EventBridge ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 
 try:
-    # Á¾·á ½ºÄÉÁÙ (¸ÅÀÏ ÀÚÁ¤ = UTC 15:00)
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ = UTC 15:00)
     events.put_rule(
         Name='marblo-stop-ec2-schedule',
-        ScheduleExpression='cron(0 15 * * ? *)',  # ¸ÅÀÏ 15:00 UTC (ÀÚÁ¤ KST)
+        ScheduleExpression='cron(0 15 * * ? *)',  # ï¿½ï¿½ï¿½ï¿½ 15:00 UTC (ï¿½ï¿½ï¿½ï¿½ KST)
         State='ENABLED',
         Description='Stop EC2 at midnight KST'
     )
-    print(f"? ½ºÄÉÁÙ »ý¼º: marblo-stop-ec2-schedule (ÀÚÁ¤)")
+    print(f"? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: marblo-stop-ec2-schedule (ï¿½ï¿½ï¿½ï¿½)")
     
-    # Á¾·á ½ºÄÉÁÙ°ú Lambda ¿¬°á
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ù°ï¿½ Lambda ï¿½ï¿½ï¿½ï¿½
     events.put_targets(
         Rule='marblo-stop-ec2-schedule',
         Targets=[{
@@ -140,18 +140,18 @@ try:
             'Arn': 'arn:aws:lambda:' + REGION + ':*:function:marblo-stop-ec2'
         }]
     )
-    print(f"? Lambda ¿¬°á ¿Ï·á")
+    print(f"? Lambda ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
     
-    # ½ÃÀÛ ½ºÄÉÁÙ (¸ÅÀÏ ¿ÀÀü 10½Ã = UTC 01:00)
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 10ï¿½ï¿½ = UTC 01:00)
     events.put_rule(
         Name='marblo-start-ec2-schedule',
-        ScheduleExpression='cron(0 1 * * ? *)',  # ¸ÅÀÏ 01:00 UTC (¿ÀÀü 10½Ã KST)
+        ScheduleExpression='cron(0 1 * * ? *)',  # ï¿½ï¿½ï¿½ï¿½ 01:00 UTC (ï¿½ï¿½ï¿½ï¿½ 10ï¿½ï¿½ KST)
         State='ENABLED',
         Description='Start EC2 at 10 AM KST'
     )
-    print(f"? ½ºÄÉÁÙ »ý¼º: marblo-start-ec2-schedule (¿ÀÀü 10½Ã)")
+    print(f"? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: marblo-start-ec2-schedule (ï¿½ï¿½ï¿½ï¿½ 10ï¿½ï¿½)")
     
-    # ½ÃÀÛ ½ºÄÉÁÙ°ú Lambda ¿¬°á
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ù°ï¿½ Lambda ï¿½ï¿½ï¿½ï¿½
     events.put_targets(
         Rule='marblo-start-ec2-schedule',
         Targets=[{
@@ -159,13 +159,13 @@ try:
             'Arn': 'arn:aws:lambda:' + REGION + ':function:marblo-start-ec2'
         }]
     )
-    print(f"? Lambda ¿¬°á ¿Ï·á")
+    print(f"? Lambda ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
     
 except Exception as e:
-    print(f"??  EventBridge ¿À·ù: {e}")
+    print(f"??  EventBridge ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 4. Lambda ±ÇÇÑ Ãß°¡
-print("\n4??  Lambda ±ÇÇÑ ¼³Á¤...")
+# 4. Lambda ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+print("\n4??  Lambda ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 try:
     lambda_client.add_permission(
         FunctionName='marblo-stop-ec2',
@@ -182,23 +182,23 @@ try:
         Principal='events.amazonaws.com',
         SourceArn='arn:aws:events:' + REGION + ':*:rule/marblo-start-ec2-schedule'
     )
-    print(f"? Lambda ±ÇÇÑ ¼³Á¤ ¿Ï·á")
+    print(f"? Lambda ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
 except Exception as e:
-    print(f"??  ±ÇÇÑ ¼³Á¤ ¿À·ù: {e}")
+    print(f"??  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
 
 print(f"\n{'='*80}")
-print(f"? EC2 ½ºÄÉÁÙ ¼³Á¤ ¿Ï·á!")
+print(f"? EC2 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
 print(f"{'='*80}")
 print(f"""
-?? ½ºÄÉÁÙ:
-   - Á¾·á: ¸ÅÀÏ ÀÚÁ¤ (00:00 KST)
-   - ½ÃÀÛ: ¸ÅÀÏ ¿ÀÀü 10½Ã (10:00 KST)
-   - ¿î¿µ: 10½Ã°£ (10:00-00:00)
+?? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:
+   - ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (00:00 KST)
+   - ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 10ï¿½ï¿½ (10:00 KST)
+   - ï¿½î¿µ: 10ï¿½Ã°ï¿½ (10:00-00:00)
 
-?? ºñ¿ë Àý°¨:
-   - Á¾·á ½Ã°£: 14½Ã°£ (¿ù 420½Ã°£)
-   - EC2 ¿î¿µ ºñ¿ë: $12/¿ù (±âÁ¸ $30¿¡¼­ 60% °¨¼Ò)
-   - ¿ù°£ Àý°¨¾×: $18
+?? ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:
+   - ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½: 14ï¿½Ã°ï¿½ (ï¿½ï¿½ 420ï¿½Ã°ï¿½)
+   - EC2 ï¿½î¿µ ï¿½ï¿½ï¿½: $12/ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ $30ï¿½ï¿½ï¿½ï¿½ 60% ï¿½ï¿½ï¿½ï¿½)
+   - ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: $18
 """)
 
 

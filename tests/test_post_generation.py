@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for blog post generation and management (Phase 5-6).
 
 Tests cover:

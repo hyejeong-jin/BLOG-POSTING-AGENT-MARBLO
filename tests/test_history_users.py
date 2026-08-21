@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for generation history and multi-user support (Phase 8-9).
 
 Tests cover:

@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
@@ -10,29 +10,29 @@ instance_id = "i-09f4386f2b588b52b"
 sg_id = "sg-0c353d082d04fec39"
 
 print("\n" + "="*80)
-print("?? EC2 ¹× º¸¾È ±×·ì »óÅÂ È®ÀÎ")
+print("?? EC2 ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½")
 print("="*80)
 
-# 1. EC2 ÀÎ½ºÅÏ½º »óÅÂ
-print("\n1??  EC2 ÀÎ½ºÅÏ½º »óÅÂ:")
+# 1. EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n1??  EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½:")
 try:
     instances = ec2.describe_instances(InstanceIds=[instance_id])
     instance = instances['Reservations'][0]['Instances'][0]
-    print(f"   »óÅÂ: {instance['State']['Name']}")
-    print(f"   °ø°³ IP: {instance.get('PublicIpAddress', 'N/A')}")
-    print(f"   Åº·ÂÀû IP: {instance.get('PublicIpAddress', 'N/A')}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½: {instance['State']['Name']}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½ IP: {instance.get('PublicIpAddress', 'N/A')}")
+    print(f"   Åºï¿½ï¿½ï¿½ï¿½ IP: {instance.get('PublicIpAddress', 'N/A')}")
 except Exception as e:
-    print(f"   ¿À·ù: {e}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 2. º¸¾È ±×·ì ÀÎ¹Ù¿îµå ±ÔÄ¢
-print("\n2??  º¸¾È ±×·ì ÀÎ¹Ù¿îµå ±ÔÄ¢:")
+# 2. ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½Î¹Ù¿ï¿½ï¿½ ï¿½ï¿½Ä¢
+print("\n2??  ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½Î¹Ù¿ï¿½ï¿½ ï¿½ï¿½Ä¢:")
 try:
     sgs = ec2.describe_security_groups(GroupIds=[sg_id])
     sg = sgs['SecurityGroups'][0]
     
-    print(f"   º¸¾È ±×·ì ID: {sg['GroupId']}")
-    print(f"   ÀÌ¸§: {sg['GroupName']}")
-    print("\n   ÀÎ¹Ù¿îµå ±ÔÄ¢:")
+    print(f"   ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ID: {sg['GroupId']}")
+    print(f"   ï¿½Ì¸ï¿½: {sg['GroupName']}")
+    print("\n   ï¿½Î¹Ù¿ï¿½ï¿½ ï¿½ï¿½Ä¢:")
     
     for rule in sg.get('IpPermissions', []):
         protocol = rule.get('IpProtocol', 'all')
@@ -43,16 +43,16 @@ try:
         if rule.get('IpRanges'):
             cidr = rule['IpRanges'][0].get('CidrIp', 'N/A')
         
-        print(f"     - ÇÁ·ÎÅäÄÝ: {protocol}, Æ÷Æ®: {from_port}-{to_port}, CIDR: {cidr}")
+        print(f"     - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {protocol}, ï¿½ï¿½Æ®: {from_port}-{to_port}, CIDR: {cidr}")
     
 except Exception as e:
-    print(f"   ¿À·ù: {e}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 3. ¹®Á¦ Áø´Ü
-print("\n3??  ¹®Á¦ Áø´Ü:")
-print("   ? ¾ÖÇÃ¸®ÄÉÀÌ¼Ç ¹Ì¹èÆ÷: Docker ÀÌ¹ÌÁö ½ÇÇà ÇÊ¿ä")
-print("   ? º¸¾È ±×·ì: Æ÷Æ® 8000 °³¹æ (0.0.0.0/0)")
-print("   ? Åº·ÂÀû IP: ÇÒ´çµÊ (54.86.13.231)")
+# 3. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n3??  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:")
+print("   ? ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½: Docker ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½")
+print("   ? ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½: ï¿½ï¿½Æ® 8000 ï¿½ï¿½ï¿½ï¿½ (0.0.0.0/0)")
+print("   ? Åºï¿½ï¿½ï¿½ï¿½ IP: ï¿½Ò´ï¿½ï¿½ (54.86.13.231)")
 
 print("\n" + "="*80)
 

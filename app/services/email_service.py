@@ -1,4 +1,4 @@
-"""
+﻿"""
 Email service for sending emails through SES or SendGrid.
 
 This module provides functionality to send emails for password resets,

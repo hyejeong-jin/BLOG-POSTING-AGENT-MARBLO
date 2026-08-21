@@ -1,4 +1,4 @@
-"""
+﻿"""
 Integration tests for Phases 4-9 of Marblo MVP.
 
 Tests complete workflows combining multiple services and endpoints.
@@ -26,11 +26,11 @@ async def test_complete_workflow_style_to_post_to_export(
     
     # Step 1: Learn writing style
     sample_content = """
-    ?�녕?�세?? ??블로그는 부?�산 ?�보�??�문?�로 ?�룹?�다.
-    ?�늘?� 매매 ?�장??최근 ?�렌?�에 ?�???�야기하겠습?�다.
+    ?�녕?�세?? ??블로그는 부?�산 ?�보�??�문?�로 ?�룹?�다.
+    ?�늘?� 매매 ?�장??최근 ?�렌?�에 ?�???�야기하겠습?�다.
     
-    부?�산 ?�자???�중?�게 진행?�야 ?�니??
-    감사?�니??
+    부?�산 ?�자???�중?�게 진행?�야 ?�니??
+    감사?�니??
     """
     
     style_response = client.post(
@@ -57,7 +57,7 @@ async def test_complete_workflow_style_to_post_to_export(
         json={
             "photo_ids": [photo_id],
             "style_profile_id": profile_id,
-            "tags": ["부?�산", "?�자"],
+            "tags": ["부?�산", "?�자"],
             "category": "real_estate",
         },
     )
@@ -75,8 +75,8 @@ async def test_complete_workflow_style_to_post_to_export(
         f"/api/v1/posts/{post_id}",
         headers=auth_headers,
         json={
-            "title": f"{post_data['title']} (?�정??",
-            "tags": ["부?�산", "?�자", "?�보"],
+            "title": f"{post_data['title']} (?�정??",
+            "tags": ["부?�산", "?�자", "?�보"],
         },
     )
     
@@ -143,8 +143,8 @@ async def test_complete_workflow_manual_post_to_publish(
         "/api/v1/posts/create",
         headers=auth_headers,
         json={
-            "title": "?�동?�로 ?�성??블로�??�스??,
-            "body": "?�것?� ?�동?�로 ?�성??블로�??�스?�입?�다. AI ?�성???�닌 직접 ?�성?�습?�다.",
+            "title": "?�동?�로 ?�성??블로�??�스??,
+            "body": "?�것?� ?�동?�로 ?�성??블로�??�스?�입?�다. AI ?�성???�닌 직접 ?�성?�습?�다.",
             "tags": ["manual", "writing"],
             "category": "general",
         },
@@ -173,8 +173,8 @@ async def test_complete_workflow_manual_post_to_publish(
         f"/api/v1/posts/{post_id}",
         headers=auth_headers,
         json={
-            "title": "?�정??블로�??�스???�목",
-            "body": "본문???�정?�습?�다. ??많�? ?�보�??�함?�습?�다.",
+            "title": "?�정??블로�??�스???�목",
+            "body": "본문???�정?�습?�다. ??많�? ?�보�??�함?�습?�다.",
         },
     )
     
@@ -189,7 +189,7 @@ async def test_complete_workflow_manual_post_to_publish(
     
     assert export_response.status_code == 200
     assert "---" in export_response.text
-    assert "?�목" in export_response.text or "title:" in export_response.text
+    assert "?�목" in export_response.text or "title:" in export_response.text
     
     # Step 5: Publish
     publish_response = client.post(
@@ -281,7 +281,7 @@ async def test_style_profile_persistence_and_updates(
     """
     
     # Step 1: Create initial profile
-    initial_samples = "�?번째 블로�??�스?�입?�다. ?�렇�??�성?�니??"
+    initial_samples = "�?번째 블로�??�스?�입?�다. ?�렇�??�성?�니??"
     
     initial_response = client.post(
         "/api/v1/styles/upload-samples",
@@ -306,7 +306,7 @@ async def test_style_profile_persistence_and_updates(
     
     # Step 4: Update profile
     update_data = {
-        "characteristic_phrases": ["?�녕?�세??, "감사?�니??, "?�으�?],
+        "characteristic_phrases": ["?�녕?�세??, "감사?�니??, "?�으�?],
     }
     
     update_response = client.put(

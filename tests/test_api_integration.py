@@ -1,4 +1,4 @@
-"""
+﻿"""
 Integration tests for API endpoints covering complete workflows.
 
 **Validates: Requirements 12.1 (Testing), 6.1 (Multi-user), 3.1-3.6 (Post Generation)**

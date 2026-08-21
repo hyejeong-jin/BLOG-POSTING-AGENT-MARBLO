@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for manual blog post creation endpoint.
 
 Tests POST /api/v1/posts/create which allows users to create blog posts
@@ -313,7 +313,7 @@ async def test_create_post_manual_special_characters(
     """
     request_data = {
         "title": "Post with Special Characters: @#$%^&*()",
-        "body": "Content with symbols: 가�?$500,000 / ????,000,000 #real_estate #invest",
+        "body": "Content with symbols: 가�?$500,000 / ????,000,000 #real_estate #invest",
         "category": "real_estate"
     }
     

@@ -1,4 +1,4 @@
-"""Initial migration: Create all tables
+﻿"""Initial migration: Create all tables
 
 Revision ID: 198735145426
 Revises: 

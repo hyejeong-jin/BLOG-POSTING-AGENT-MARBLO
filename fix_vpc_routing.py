@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
@@ -7,15 +7,15 @@ REGION = "us-east-1"
 ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
 print("\n" + "="*80)
-print("?? VPC ¶ó¿ìÆÃ ¼³Á¤ ¼öÁ¤")
+print("?? VPC ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")
 print("="*80)
 
 vpc_id = "vpc-077f48a855caba525"
 subnet_id = "subnet-06856f53a16494792"
 igw_id = "igw-08f4cea973df0f3a2"
 
-# 1. ¶ó¿ìÆ® Å×ÀÌºí È®ÀÎ
-print("\n1??  ¶ó¿ìÆ® Å×ÀÌºí È®ÀÎ...")
+# 1. ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Ìºï¿½ È®ï¿½ï¿½
+print("\n1??  ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Ìºï¿½ È®ï¿½ï¿½...")
 try:
     route_tables = ec2.describe_route_tables(
         Filters=[
@@ -25,59 +25,59 @@ try:
     
     if route_tables['RouteTables']:
         route_table_id = route_tables['RouteTables'][0]['RouteTableId']
-        print(f"   ¶ó¿ìÆ® Å×ÀÌºí: {route_table_id}")
+        print(f"   ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Ìºï¿½: {route_table_id}")
     else:
-        # »õ ¶ó¿ìÆ® Å×ÀÌºí »ý¼º
+        # ï¿½ï¿½ ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
         rt = ec2.create_route_table(VpcId=vpc_id)
         route_table_id = rt['RouteTable']['RouteTableId']
-        print(f"   ? »õ ¶ó¿ìÆ® Å×ÀÌºí »ý¼º: {route_table_id}")
+        print(f"   ? ï¿½ï¿½ ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½: {route_table_id}")
     
 except Exception as e:
-    print(f"   ? ¿À·ù: {e}")
+    print(f"   ? ï¿½ï¿½ï¿½ï¿½: {e}")
     exit(1)
 
-# 2. ÀÎÅÍ³Ý °ÔÀÌÆ®¿þÀÌ·ÎÀÇ ¶ó¿ìÆ® Ãß°¡
-print("\n2??  ÀÎÅÍ³Ý °ÔÀÌÆ®¿þÀÌ ¶ó¿ìÆ® Ãß°¡...")
+# 2. ï¿½ï¿½ï¿½Í³ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ® ï¿½ß°ï¿½
+print("\n2??  ï¿½ï¿½ï¿½Í³ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ® ï¿½ß°ï¿½...")
 try:
     ec2.create_route(
         RouteTableId=route_table_id,
         DestinationCidrBlock='0.0.0.0/0',
         GatewayId=igw_id
     )
-    print(f"   ? ¶ó¿ìÆ® Ãß°¡ ¿Ï·á: 0.0.0.0/0 -> {igw_id}")
+    print(f"   ? ï¿½ï¿½ï¿½Æ® ï¿½ß°ï¿½ ï¿½Ï·ï¿½: 0.0.0.0/0 -> {igw_id}")
 except Exception as e:
     if 'already exists' in str(e):
-        print(f"   ? ¶ó¿ìÆ®°¡ ÀÌ¹Ì Á¸Àç")
+        print(f"   ? ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½")
     else:
-        print(f"   ??  ¿À·ù: {e}")
+        print(f"   ??  ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 3. ¼­ºê³Ý°ú ¶ó¿ìÆ® Å×ÀÌºí ¿¬°á
-print("\n3??  ¼­ºê³ÝÀ» ¶ó¿ìÆ® Å×ÀÌºí°ú ¿¬°á...")
+# 3. ï¿½ï¿½ï¿½ï¿½Ý°ï¿½ ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n3??  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Ìºï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 try:
     ec2.associate_route_table(
         RouteTableId=route_table_id,
         SubnetId=subnet_id
     )
-    print(f"   ? ¼­ºê³Ý ¿¬°á ¿Ï·á")
+    print(f"   ? ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
 except Exception as e:
     if 'already associated' in str(e):
-        print(f"   ? ÀÌ¹Ì ¿¬°áµÇ¾î ÀÖÀ½")
+        print(f"   ? ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½ï¿½ï¿½ï¿½")
     else:
-        print(f"   ??  ¿À·ù: {e}")
+        print(f"   ??  ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 4. ÆÛºí¸¯ IP ÀÚµ¿ ÇÒ´ç È°¼ºÈ­
-print("\n4??  ÆÛºí¸¯ IP ÀÚµ¿ ÇÒ´ç È°¼ºÈ­...")
+# 4. ï¿½Ûºï¿½ï¿½ IP ï¿½Úµï¿½ ï¿½Ò´ï¿½ È°ï¿½ï¿½È­
+print("\n4??  ï¿½Ûºï¿½ï¿½ IP ï¿½Úµï¿½ ï¿½Ò´ï¿½ È°ï¿½ï¿½È­...")
 try:
     ec2.modify_subnet_attribute(
         SubnetId=subnet_id,
         MapPublicIpOnLaunch={'Value': True}
     )
-    print(f"   ? ÆÛºí¸¯ IP ÀÚµ¿ ÇÒ´ç È°¼ºÈ­")
+    print(f"   ? ï¿½Ûºï¿½ï¿½ IP ï¿½Úµï¿½ ï¿½Ò´ï¿½ È°ï¿½ï¿½È­")
 except Exception as e:
-    print(f"   ??  ¿À·ù: {e}")
+    print(f"   ??  ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 5. ÇöÀç »óÅÂ È®ÀÎ
-print("\n5??  ÃÖÁ¾ »óÅÂ È®ÀÎ...")
+# 5. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+print("\n5??  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½...")
 try:
     instances = ec2.describe_instances(
         Filters=[
@@ -87,24 +87,24 @@ try:
     
     if instances['Reservations']:
         instance = instances['Reservations'][0]['Instances'][0]
-        print(f"   EC2 »óÅÂ: {instance['State']['Name']}")
-        print(f"   ¼­ºê³Ý: {instance['SubnetId']}")
-        print(f"   ÆÛºí¸¯ IP: {instance.get('PublicIpAddress', 'N/A')}")
-        print(f"   Åº·ÂÀû IP: 54.86.13.231")
+        print(f"   EC2 ï¿½ï¿½ï¿½ï¿½: {instance['State']['Name']}")
+        print(f"   ï¿½ï¿½ï¿½ï¿½ï¿½: {instance['SubnetId']}")
+        print(f"   ï¿½Ûºï¿½ï¿½ IP: {instance.get('PublicIpAddress', 'N/A')}")
+        print(f"   Åºï¿½ï¿½ï¿½ï¿½ IP: 54.86.13.231")
         
 except Exception as e:
-    print(f"   ??  ¿À·ù: {e}")
+    print(f"   ??  ï¿½ï¿½ï¿½ï¿½: {e}")
 
 print("\n" + "="*80)
-print("? VPC ¼³Á¤ ¿Ï·á!")
+print("? VPC ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
 print("="*80)
 print("""
-´ÙÀ½ ´Ü°è:
-1. AWS Console¿¡¼­ ÀÎ½ºÅÏ½º »õ·Î°íÄ§ (F5)
-2. ÀÎ½ºÅÏ½º ¼±ÅÃ ÈÄ '¿¬°á' Å¬¸¯
-3. 'EC2 ÀÎ½ºÅÏ½º ¿¬°á' ÅÇ¿¡¼­ '¿¬°á' Å¬¸¯
+ï¿½ï¿½ï¿½ï¿½ ï¿½Ü°ï¿½:
+1. AWS Consoleï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½Î°ï¿½Ä§ (F5)
+2. ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ 'ï¿½ï¿½ï¿½ï¿½' Å¬ï¿½ï¿½
+3. 'EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½' ï¿½Ç¿ï¿½ï¿½ï¿½ 'ï¿½ï¿½ï¿½ï¿½' Å¬ï¿½ï¿½
 
-¶Ç´Â SSH·Î Á÷Á¢ Á¢¼Ó:
+ï¿½Ç´ï¿½ SSHï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:
 ssh -i marblo-deploy-key.pem ubuntu@54.86.13.231
 """)
 

@@ -1,4 +1,4 @@
-"""
+﻿"""
 AWS S3 client for photo upload, download, and management.
 
 This module provides high-level functions for:

@@ -1,7 +1,7 @@
-import boto3
+ï»¿import boto3
 import time
 
-# AWS ÀÚ°ÝÁõ¸í
+# AWS ï¿½Ú°ï¿½ï¿½ï¿½ï¿½ï¿½
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
 REGION = "us-east-1"
@@ -20,14 +20,14 @@ CONFIG = {
 }
 
 print("\n" + "=" * 80)
-print("?? Marblo AWS ¹èÆ÷ (EC2 + RDS) - ¼öÁ¤ÆÇ")
+print("?? Marblo AWS ï¿½ï¿½ï¿½ï¿½ (EC2 + RDS) - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")
 print("=" * 80)
 
 ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 rds = boto3.client('rds', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
-# 1. À¯È¿ÇÑ Ubuntu AMI Ã£±â
-print("\n?? Step 1: Ubuntu AMI Ã£±â")
+# 1. ï¿½ï¿½È¿ï¿½ï¿½ Ubuntu AMI Ã£ï¿½ï¿½
+print("\n?? Step 1: Ubuntu AMI Ã£ï¿½ï¿½")
 try:
     images = ec2.describe_images(
         Filters=[
@@ -39,16 +39,16 @@ try:
     )
     if images['Images']:
         ami_id = images['Images'][0]['ImageId']
-        print(f"? Ubuntu 22.04 LTS AMI Ã£À½: {ami_id}")
+        print(f"? Ubuntu 22.04 LTS AMI Ã£ï¿½ï¿½: {ami_id}")
     else:
-        ami_id = 'ami-0c02fb55e03a2b414'  # ÀÏ¹ÝÀûÀÎ us-east-1 Ubuntu AMI
-        print(f"? ±âº» Ubuntu AMI »ç¿ë: {ami_id}")
+        ami_id = 'ami-0c02fb55e03a2b414'  # ï¿½Ï¹ï¿½ï¿½ï¿½ï¿½ï¿½ us-east-1 Ubuntu AMI
+        print(f"? ï¿½âº» Ubuntu AMI ï¿½ï¿½ï¿½: {ami_id}")
 except Exception as e:
     ami_id = 'ami-0c02fb55e03a2b414'
-    print(f"??  AMI °Ë»ö ¿À·ù, ±âº»°ª »ç¿ë: {ami_id}")
+    print(f"??  AMI ï¿½Ë»ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½âº»ï¿½ï¿½ ï¿½ï¿½ï¿½: {ami_id}")
 
-# 2. EC2 ÀÎ½ºÅÏ½º »ý¼º
-print("\n???  Step 2: EC2 ÀÎ½ºÅÏ½º »ý¼º")
+# 2. EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n???  Step 2: EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½")
 try:
     response = ec2.run_instances(
         ImageId=ami_id,
@@ -66,47 +66,47 @@ try:
         }]
     )
     instance_id = response['Instances'][0]['InstanceId']
-    print(f"? EC2 ÀÎ½ºÅÏ½º »ý¼º: {instance_id}")
-    print(f"   ? ÀÎ½ºÅÏ½º ½ÃÀÛ Áß (30-60ÃÊ)...")
+    print(f"? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½: {instance_id}")
+    print(f"   ? ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ (30-60ï¿½ï¿½)...")
     
-    # ÀÎ½ºÅÏ½º ½ÇÇà ´ë±â
+    # ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     waiter = ec2.get_waiter('instance_running')
     waiter.wait(InstanceIds=[instance_id])
     
-    # °ø°³ IP È®ÀÎ
+    # ï¿½ï¿½ï¿½ï¿½ IP È®ï¿½ï¿½
     instances = ec2.describe_instances(InstanceIds=[instance_id])
     instance = instances['Reservations'][0]['Instances'][0]
     instance_ip = instance.get('PublicIpAddress', 'N/A')
-    print(f"? EC2 ÀÎ½ºÅÏ½º ½ÇÇà ¿Ï·á")
-    print(f"   ÀÎ½ºÅÏ½º ID: {instance_id}")
-    print(f"   °ø°³ IP: {instance_ip}")
+    print(f"? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
+    print(f"   ï¿½Î½ï¿½ï¿½Ï½ï¿½ ID: {instance_id}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½ IP: {instance_ip}")
 except Exception as e:
-    print(f"? EC2 ¿À·ù: {e}")
+    print(f"? EC2 ï¿½ï¿½ï¿½ï¿½: {e}")
     instance_id = None
     instance_ip = None
 
-# 3. RDS µ¥ÀÌÅÍº£ÀÌ½º »ý¼º
-print("\n?? Step 3: RDS PostgreSQL µ¥ÀÌÅÍº£ÀÌ½º »ý¼º")
+# 3. RDS ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n?? Step 3: RDS PostgreSQL ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½")
 try:
-    # ±âÁ¸ RDS È®ÀÎ
+    # ï¿½ï¿½ï¿½ï¿½ RDS È®ï¿½ï¿½
     db_instances = rds.describe_db_instances()
     existing = [d for d in db_instances.get('DBInstances', []) if d['DBInstanceIdentifier'] == f'{CONFIG["app_name"]}-db']
     
     if existing:
-        print(f"? RDS ÀÎ½ºÅÏ½º ÀÌ¹Ì Á¸Àç: {CONFIG['app_name']}-db")
+        print(f"? RDS ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {CONFIG['app_name']}-db")
         db_endpoint = existing[0].get('Endpoint', {}).get('Address', 'N/A')
         db_status = existing[0].get('DBInstanceStatus', 'unknown')
-        print(f"   »óÅÂ: {db_status}")
-        print(f"   ¿£µåÆ÷ÀÎÆ®: {db_endpoint}")
+        print(f"   ï¿½ï¿½ï¿½ï¿½: {db_status}")
+        print(f"   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®: {db_endpoint}")
     else:
-        print(f"   RDS ÀÎ½ºÅÏ½º »ý¼º Áß...")
+        print(f"   RDS ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
         
-        # PostgreSQL 14 (ÇÁ¸®Æ¼¾î Áö¿ø)
+        # PostgreSQL 14 (ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         rds.create_db_instance(
             DBInstanceIdentifier=f'{CONFIG["app_name"]}-db',
             DBInstanceClass='db.t3.micro',
             Engine='postgres',
-            EngineVersion='14.10',  # ÇÁ¸®Æ¼¾î Áö¿ø ¹öÀü
+            EngineVersion='14.10',  # ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             MasterUsername=CONFIG['db_user'],
             MasterUserPassword=CONFIG['db_password'],
             DBName=CONFIG['db_name'],
@@ -124,15 +124,15 @@ try:
                 {'Key': 'Environment', 'Value': CONFIG['environment']}
             ]
         )
-        print(f"? RDS ÀÎ½ºÅÏ½º »ý¼º ½ÃÀÛ: {CONFIG['app_name']}-db")
-        print(f"   ¿£Áø: PostgreSQL 14.10")
-        print(f"   Å¬·¡½º: db.t3.micro (ÇÁ¸®Æ¼¾î)")
+        print(f"? RDS ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {CONFIG['app_name']}-db")
+        print(f"   ï¿½ï¿½ï¿½ï¿½: PostgreSQL 14.10")
+        print(f"   Å¬ï¿½ï¿½ï¿½ï¿½: db.t3.micro (ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½)")
 except Exception as e:
-    print(f"? RDS ¿À·ù: {e}")
+    print(f"? RDS ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 4. ¹èÆ÷ Á¤º¸ ÀúÀå
+# 4. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 print("\n" + "=" * 80)
-print("? AWS ¹èÆ÷ ¿Ï·á!")
+print("? AWS ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
 print("=" * 80)
 
 deployment_info = {
@@ -158,37 +158,37 @@ deployment_info = {
 }
 
 print(f"""
-?? ¹èÆ÷ Á¤º¸:
+?? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:
 
-???  EC2 ÀÎ½ºÅÏ½º:
+???  EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½:
    ID: {instance_id}
-   À¯Çü: {CONFIG['instance_type']} (t3.medium)
-   °ø°³ IP: {instance_ip}
-   º¸¾È ±×·ì: {CONFIG['sg_id']}
+   ï¿½ï¿½ï¿½ï¿½: {CONFIG['instance_type']} (t3.medium)
+   ï¿½ï¿½ï¿½ï¿½ IP: {instance_ip}
+   ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½: {CONFIG['sg_id']}
 
-?? RDS µ¥ÀÌÅÍº£ÀÌ½º:
-   ½Äº°ÀÚ: {CONFIG["app_name"]}-db
-   ¿£Áø: PostgreSQL 14.10
-   Å¬·¡½º: db.t3.micro (ÇÁ¸®Æ¼¾î)
-   »ç¿ëÀÚ: {CONFIG['db_user']}
-   ºñ¹Ð¹øÈ£: ????????????
-   µ¥ÀÌÅÍº£ÀÌ½º: {CONFIG['db_name']}
+?? RDS ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½:
+   ï¿½Äºï¿½ï¿½ï¿½: {CONFIG["app_name"]}-db
+   ï¿½ï¿½ï¿½ï¿½: PostgreSQL 14.10
+   Å¬ï¿½ï¿½ï¿½ï¿½: db.t3.micro (ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½)
+   ï¿½ï¿½ï¿½ï¿½ï¿½: {CONFIG['db_user']}
+   ï¿½ï¿½Ð¹ï¿½È£: ????????????
+   ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½: {CONFIG['db_name']}
 
-?? S3 ¹öÅ¶:
-   ÀÌ¸§: {CONFIG['s3_bucket']}
+?? S3 ï¿½ï¿½Å¶:
+   ï¿½Ì¸ï¿½: {CONFIG['s3_bucket']}
 
-?? AWS ¸®Àü:
-   {REGION} (us-east-1 - ¹öÁö´Ï¾Æ ºÏºÎ, ÃÖÀú°¡)
+?? AWS ï¿½ï¿½ï¿½ï¿½:
+   {REGION} (us-east-1 - ï¿½ï¿½ï¿½ï¿½ï¿½Ï¾ï¿½ ï¿½Ïºï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 
-? ÃÊ±âÈ­ ÁøÇà Áß:
-   - EC2: ±¸¼º Áß (SSH Á¢¼Ó °¡´É)
-   - RDS: 5-10ºÐ ¼Ò¿ä
+? ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½:
+   - EC2: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ (SSH ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+   - RDS: 5-10ï¿½ï¿½ ï¿½Ò¿ï¿½
 
-´ÙÀ½ ´Ü°è:
-   1. EC2 ÀÎ½ºÅÏ½º¿¡ SSH Á¢¼Ó
-   2. Docker Compose·Î ¾ÖÇÃ¸®ÄÉÀÌ¼Ç ¹èÆ÷
-   3. µ¥ÀÌÅÍº£ÀÌ½º ¸¶ÀÌ±×·¹ÀÌ¼Ç
-   4. ¼­ºñ½º ½ÃÀÛ
+ï¿½ï¿½ï¿½ï¿½ ï¿½Ü°ï¿½:
+   1. EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ SSH ï¿½ï¿½ï¿½ï¿½
+   2. Docker Composeï¿½ï¿½ ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+   3. ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½Ì±×·ï¿½ï¿½Ì¼ï¿½
+   4. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 """)
 print("=" * 80)
 

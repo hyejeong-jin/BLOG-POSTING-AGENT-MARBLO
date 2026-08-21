@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for style profile update endpoint (PUT /api/styles/profile).
 
 Tests the ability to manually adjust learned writing style characteristics.

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for authentication login endpoint.
 
 Tests cover:

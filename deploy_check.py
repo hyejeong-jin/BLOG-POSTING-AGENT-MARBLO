@@ -1,24 +1,24 @@
-import boto3
+ï»¿import boto3
 import json
 import time
 import sys
 
-# AWS ÀÚ°ÝÁõ¸í
+# AWS ï¿½Ú°ï¿½ï¿½ï¿½ï¿½ï¿½
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
 REGION = "us-east-1"
 
-# Terraform º¯¼ö
+# Terraform ï¿½ï¿½ï¿½ï¿½
 TF_VARS = {
     "database_password": "YOUR_DB_PASSWORD",
     "s3_bucket_name": "hyejeong-jin-mablo-pjt-bucket"
 }
 
 print("=" * 70)
-print("?? Marblo AWS ¹èÆ÷ ½ºÅ©¸³Æ® (Python Boto3)")
+print("?? Marblo AWS ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ® (Python Boto3)")
 print("=" * 70)
 
-# EC2 Å¬¶óÀÌ¾ðÆ® »ý¼º
+# EC2 Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 ec2 = boto3.client(
     'ec2',
     region_name=REGION,
@@ -26,7 +26,7 @@ ec2 = boto3.client(
     aws_secret_access_key=SECRET_KEY
 )
 
-# S3 Å¬¶óÀÌ¾ðÆ® »ý¼º
+# S3 Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 s3 = boto3.client(
     's3',
     region_name=REGION,
@@ -34,7 +34,7 @@ s3 = boto3.client(
     aws_secret_access_key=SECRET_KEY
 )
 
-# STS·Î ÀÚ°ÝÁõ¸í °ËÁõ
+# STSï¿½ï¿½ ï¿½Ú°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 sts = boto3.client(
     'sts',
     region_name=REGION,
@@ -43,81 +43,81 @@ sts = boto3.client(
 )
 
 try:
-    print("\n?? AWS ÀÚ°ÝÁõ¸í °ËÁõ Áß...")
+    print("\n?? AWS ï¿½Ú°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
     identity = sts.get_caller_identity()
-    print(f"? AWS ·Î±×ÀÎ ¼º°ø!")
+    print(f"? AWS ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½!")
     print(f"   Account: {identity['Account']}")
     print(f"   User ARN: {identity['Arn']}")
 except Exception as e:
-    print(f"? AWS ÀÚ°ÝÁõ¸í ¿À·ù: {e}")
+    print(f"? AWS ï¿½Ú°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
     sys.exit(1)
 
-# S3 ¹öÅ¶ »ý¼º
-print("\n?? S3 ¹öÅ¶ È®ÀÎ Áß...")
+# S3 ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½
+print("\n?? S3 ï¿½ï¿½Å¶ È®ï¿½ï¿½ ï¿½ï¿½...")
 bucket_name = TF_VARS["s3_bucket_name"]
 try:
     s3.head_bucket(Bucket=bucket_name)
-    print(f"? S3 ¹öÅ¶ ÀÌ¹Ì Á¸Àç: {bucket_name}")
+    print(f"? S3 ï¿½ï¿½Å¶ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {bucket_name}")
 except s3.exceptions.NoSuchBucket:
     try:
-        print(f"   »ý¼º Áß: {bucket_name}")
+        print(f"   ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½: {bucket_name}")
         s3.create_bucket(Bucket=bucket_name)
-        print(f"? S3 ¹öÅ¶ »ý¼º ¿Ï·á: {bucket_name}")
+        print(f"? S3 ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½: {bucket_name}")
     except Exception as e:
-        print(f"??  S3 ¹öÅ¶ »ý¼º ½ÇÆÐ: {e}")
+        print(f"??  S3 ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
 except Exception as e:
-    print(f"? S3 ¿À·ù: {e}")
+    print(f"? S3 ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# °¡¿ë ¿µ¿ª È®ÀÎ
-print("\n?? AWS ¸®Àü Á¤º¸:")
-print(f"   Region: {REGION} (us-east-1 - ¹öÁö´Ï¾Æ ºÏºÎ, ÃÖÀú°¡)")
+# ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+print("\n?? AWS ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:")
+print(f"   Region: {REGION} (us-east-1 - ï¿½ï¿½ï¿½ï¿½ï¿½Ï¾ï¿½ ï¿½Ïºï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)")
 
 az_response = ec2.describe_availability_zones()
-print(f"   °¡¿ë ¿µ¿ª:")
+print(f"   ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:")
 for az in az_response['AvailabilityZones']:
     print(f"     - {az['ZoneName']}")
 
-# VPC Á¤º¸
-print("\n?? VPC ÀÎÇÁ¶ó ÁØºñ Áß...")
+# VPC ï¿½ï¿½ï¿½ï¿½
+print("\n?? VPC ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½ ï¿½ï¿½...")
 try:
     vpcs = ec2.describe_vpcs()
     if vpcs['Vpcs']:
-        print(f"? VPC È®ÀÎ: {len(vpcs['Vpcs'])}°³")
+        print(f"? VPC È®ï¿½ï¿½: {len(vpcs['Vpcs'])}ï¿½ï¿½")
 except Exception as e:
-    print(f"??  VPC È®ÀÎ ½ÇÆÐ: {e}")
+    print(f"??  VPC È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
 
 print("\n" + "=" * 70)
-print("¹èÆ÷ ¿ä¾à")
+print("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½")
 print("=" * 70)
-print(f"? AWS ÀÚ°ÝÁõ¸í: À¯È¿")
-print(f"? S3 ¹öÅ¶: {bucket_name}")
-print(f"? Áö¿ª: {REGION} (ÃÖÀú°¡)")
-print(f"? DB ºñ¹Ð¹øÈ£: ????????????")
-print(f"? È¯°æ: production")
+print(f"? AWS ï¿½Ú°ï¿½ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½È¿")
+print(f"? S3 ï¿½ï¿½Å¶: {bucket_name}")
+print(f"? ï¿½ï¿½ï¿½ï¿½: {REGION} (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)")
+print(f"? DB ï¿½ï¿½Ð¹ï¿½È£: ????????????")
+print(f"? È¯ï¿½ï¿½: production")
 
 print("\n" + "=" * 70)
-print("´ÙÀ½ ´Ü°è:")
+print("ï¿½ï¿½ï¿½ï¿½ ï¿½Ü°ï¿½:")
 print("=" * 70)
 print("""
-1. Terraform ¹èÆ÷ ½ÇÇà:
+1. Terraform ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:
    cd terraform
    terraform apply tfplan
 
-2. ¿¹»ó ºñ¿ë:
-   - EC2 t3.medium: $30/¿ù (¾ß°£ Á¾·á ½Ã $12/¿ù)
-   - RDS db.t3.micro: $0-12/¿ù (ÇÁ¸®Æ¼¾î)
-   - ElastiCache: $12/¿ù
-   - S3/CloudFront: $3-5/¿ù
-   - ÃÑ°è: $45-60/¿ù (ÃÖÀûÈ­ ÈÄ $27-42/¿ù)
+2. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½:
+   - EC2 t3.medium: $30/ï¿½ï¿½ (ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ $12/ï¿½ï¿½)
+   - RDS db.t3.micro: $0-12/ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½)
+   - ElastiCache: $12/ï¿½ï¿½
+   - S3/CloudFront: $3-5/ï¿½ï¿½
+   - ï¿½Ñ°ï¿½: $45-60/ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½È­ ï¿½ï¿½ $27-42/ï¿½ï¿½)
 
-3. ¹èÆ÷ ¿Ï·á ÈÄ:
-   - EC2 °ø°³ IP·Î Á¢¼Ó
-   - Çï½ºÃ¼Å©: curl http://{EC2_IP}:8000/health
-   - API ¹®¼­: http://{EC2_IP}:8000/docs
+3. ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½:
+   - EC2 ï¿½ï¿½ï¿½ï¿½ IPï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+   - ï¿½ï½ºÃ¼Å©: curl http://{EC2_IP}:8000/health
+   - API ï¿½ï¿½ï¿½ï¿½: http://{EC2_IP}:8000/docs
 """)
 
 print("=" * 70)
-print("? ÁØºñ ¿Ï·á! TerraformÀ¸·Î ¹èÆ÷ÇÏ¼¼¿ä")
+print("? ï¿½Øºï¿½ ï¿½Ï·ï¿½! Terraformï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½")
 print("=" * 70)
 
 

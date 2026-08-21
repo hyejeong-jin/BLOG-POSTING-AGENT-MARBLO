@@ -1,4 +1,4 @@
-"""
+﻿"""
 Unit tests for core services: photo_service, style_service, generation_service, and security functions.
 
 **Validates: Requirements 12.1 (Testing), 3.1 (Photo Analysis), 1.3 (Style Learning), 3.3 (Generation)**

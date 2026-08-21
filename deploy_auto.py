@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 import paramiko
 import time
 import os
@@ -12,23 +12,23 @@ INSTANCE_ID = "i-09f4386f2b588b52b"
 ELASTIC_IP = "54.86.13.231"
 
 print("\n" + "="*80)
-print("?? Marblo ¾ÖÇÃ¸®ÄÉÀÌ¼Ç ÀÚµ¿ ¹èÆ÷")
+print("?? Marblo ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½")
 print("="*80)
 
 ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 key_path = 'marblo-deploy-key.pem'
 
-# 1. ÇÁ·ÎÁ§Æ® ¾ÐÃà
-print("\n1??  ÇÁ·ÎÁ§Æ® ÆÄÀÏ ÁØºñ...")
+# 1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+print("\n1??  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½...")
 try:
-    # ÇÁ·ÎÁ§Æ® ÆÄÀÏ ¾ÐÃà
+    # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if os.path.exists('marblo-deploy.zip'):
         os.remove('marblo-deploy.zip')
     
     with zipfile.ZipFile('marblo-deploy.zip', 'w', zipfile.ZIP_DEFLATED) as zipf:
-        # ÁÖ¿ä ÆÄÀÏ¸¸ Æ÷ÇÔ
+        # ï¿½Ö¿ï¿½ ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½
         for root, dirs, files in os.walk('.'):
-            # Á¦¿ÜÇÒ µð·ºÅä¸®
+            # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ä¸®
             dirs[:] = [d for d in dirs if d not in ['.git', '__pycache__', '.pytest_cache', 'terraform', '.kiro', 'node_modules', '.venv', 'venv']]
             
             for file in files:
@@ -38,22 +38,22 @@ try:
                     zipf.write(file_path, arcname)
     
     file_size_mb = os.path.getsize('marblo-deploy.zip') / (1024*1024)
-    print(f"   ? ¾ÐÃà ¿Ï·á: {file_size_mb:.1f} MB")
+    print(f"   ? ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½: {file_size_mb:.1f} MB")
     
 except Exception as e:
-    print(f"   ? ¿À·ù: {e}")
+    print(f"   ? ï¿½ï¿½ï¿½ï¿½: {e}")
     exit(1)
 
-# 2. SSH ¿¬°á ¹× ¹èÆ÷
-print("\n2??  SSH ¿¬°á ¹× ¹èÆ÷...")
+# 2. SSH ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n2??  SSH ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
 try:
-    print(f"   EC2¿¡ ¿¬°á Áß ({ELASTIC_IP})...")
+    print(f"   EC2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ({ELASTIC_IP})...")
     
-    # SSH Àç½Ãµµ
+    # SSH ï¿½ï¿½Ãµï¿½
     for attempt in range(10):
         try:
             ssh.connect(
@@ -62,69 +62,69 @@ try:
                 key_filename=key_path,
                 timeout=10
             )
-            print(f"   ? SSH ¿¬°á ¼º°ø")
+            print(f"   ? SSH ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")
             break
         except Exception as e:
             if attempt < 9:
-                print(f"   ? Àç½Ãµµ {attempt+1}/10...")
+                print(f"   ? ï¿½ï¿½Ãµï¿½ {attempt+1}/10...")
                 time.sleep(3)
             else:
                 raise
     
-    # SFTP·Î ÆÄÀÏ ¾÷·Îµå
-    print(f"\n3??  ÆÄÀÏ ¾÷·Îµå Áß...")
+    # SFTPï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½
+    print(f"\n3??  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½ï¿½...")
     sftp = ssh.open_sftp()
     
     try:
         sftp.stat('/home/ubuntu/marblo')
-        print("   marblo µð·ºÅä¸® ÀÌ¹Ì Á¸Àç")
+        print("   marblo ï¿½ï¿½ï¿½ä¸® ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½")
     except IOError:
         ssh.exec_command('mkdir -p /home/ubuntu/marblo')[0].channel.recv_exit_status()
-        print("   marblo µð·ºÅä¸® »ý¼º")
+        print("   marblo ï¿½ï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½")
     
     sftp.put('marblo-deploy.zip', '/tmp/marblo-deploy.zip')
-    print(f"   ? ÆÄÀÏ ¾÷·Îµå ¿Ï·á")
+    print(f"   ? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ ï¿½Ï·ï¿½")
     sftp.close()
     
-    # ¹èÆ÷ ¸í·É ½ÇÇà
-    print(f"\n4??  ¹èÆ÷ ½ºÅ©¸³Æ® ½ÇÇà...")
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    print(f"\n4??  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½...")
     
     deploy_script = """
 #!/bin/bash
 set -e
 
-echo "?? Marblo ¹èÆ÷ ½ÃÀÛ..."
+echo "?? Marblo ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½..."
 
-# ±âº» ÆÐÅ°Áö ¼³Ä¡
-echo "1. ½Ã½ºÅÛ ÆÐÅ°Áö ¼³Ä¡..."
+# ï¿½âº» ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½Ä¡
+echo "1. ï¿½Ã½ï¿½ï¿½ï¿½ ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½Ä¡..."
 sudo apt-get update
 sudo apt-get install -y curl wget git unzip python3-pip
 
-# Docker ¼³Ä¡
-echo "2. Docker ¼³Ä¡..."
+# Docker ï¿½ï¿½Ä¡
+echo "2. Docker ï¿½ï¿½Ä¡..."
 if ! command -v docker &> /dev/null; then
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh get-docker.sh
     sudo usermod -aG docker ubuntu
-    echo "? Docker ¼³Ä¡ ¿Ï·á"
+    echo "? Docker ï¿½ï¿½Ä¡ ï¿½Ï·ï¿½"
 else
-    echo "? Docker ÀÌ¹Ì ¼³Ä¡µÊ"
+    echo "? Docker ï¿½Ì¹ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½"
 fi
 
-# docker-compose ¼³Ä¡
-echo "3. Docker Compose ¼³Ä¡..."
+# docker-compose ï¿½ï¿½Ä¡
+echo "3. Docker Compose ï¿½ï¿½Ä¡..."
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
-echo "? Docker Compose ¼³Ä¡ ¿Ï·á"
+echo "? Docker Compose ï¿½ï¿½Ä¡ ï¿½Ï·ï¿½"
 
-# ÇÁ·ÎÁ§Æ® ÁØºñ
-echo "4. ÇÁ·ÎÁ§Æ® ÆÄÀÏ ÁØºñ..."
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Øºï¿½
+echo "4. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½..."
 cd /home/ubuntu/marblo
 unzip -q /tmp/marblo-deploy.zip -d .
 ls -la
 
-# È¯°æ ÆÄÀÏ »ý¼º
-echo "5. È¯°æ ÆÄÀÏ »ý¼º..."
+# È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+echo "5. È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½..."
 cat > .env.production <<'ENVEOF'
 ENVIRONMENT=production
 DEBUG=false
@@ -144,20 +144,20 @@ POSTGRES_PASSWORD=YOUR_DB_PASSWORD
 POSTGRES_DB=marblo_db
 REDIS_PORT=6379
 ENVEOF
-echo "? È¯°æ ÆÄÀÏ »ý¼º ¿Ï·á"
+echo "? È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½"
 
-# Docker Compose ½ÃÀÛ
-echo "6. Docker Compose ½ÃÀÛ..."
+# Docker Compose ï¿½ï¿½ï¿½ï¿½
+echo "6. Docker Compose ï¿½ï¿½ï¿½ï¿½..."
 sudo docker-compose up -d
 
-echo "7. ÄÁÅ×ÀÌ³Ê »óÅÂ È®ÀÎ..."
+echo "7. ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½..."
 sudo docker-compose ps
 
-echo "? ¹èÆ÷ ¿Ï·á!"
+echo "? ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!"
 echo "   http://54.86.13.231:8000"
 """
     
-    # ¹èÆ÷ ½ºÅ©¸³Æ® ½ÇÇà
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
     stdin, stdout, stderr = ssh.exec_command(deploy_script)
     exit_code = stdout.channel.recv_exit_status()
     
@@ -169,32 +169,32 @@ echo "   http://54.86.13.231:8000"
         print(f"   ??  stderr: {error}")
     
     if exit_code == 0:
-        print(f"\n   ? ¹èÆ÷ ¿Ï·á!")
+        print(f"\n   ? ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
     else:
-        print(f"\n   ??  ¹èÆ÷ Áß ¹®Á¦ ¹ß»ý (exit code: {exit_code})")
+        print(f"\n   ??  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ (exit code: {exit_code})")
     
     ssh.close()
     
 except Exception as e:
-    print(f"   ? ¹èÆ÷ ½ÇÆÐ: {e}")
+    print(f"   ? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
     exit(1)
 
-# Á¤¸®
-print("\n5??  ÀÓ½Ã ÆÄÀÏ Á¤¸®...")
+# ï¿½ï¿½ï¿½ï¿½
+print("\n5??  ï¿½Ó½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 if os.path.exists('marblo-deploy.zip'):
     os.remove('marblo-deploy.zip')
-    print("   ? Á¤¸® ¿Ï·á")
+    print("   ? ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
 
 print("\n" + "="*80)
-print("? ¹èÆ÷ ¿Ï·á!")
+print("? ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
 print("="*80)
 print(f"""
-¼­ºñ½º URL: http://54.86.13.231:8000
-API ¹®¼­: http://54.86.13.231:8000/docs
-Çï½º Ã¼Å©: http://54.86.13.231:8000/health
+ï¿½ï¿½ï¿½ï¿½ URL: http://54.86.13.231:8000
+API ï¿½ï¿½ï¿½ï¿½: http://54.86.13.231:8000/docs
+ï¿½ï½º Ã¼Å©: http://54.86.13.231:8000/health
 
-? ¾ÖÇÃ¸®ÄÉÀÌ¼Ç ½ÃÀÛ ÁßÀÔ´Ï´Ù (30ÃÊ-1ºÐ ¼Ò¿ä)
-   ÀÌÈÄ À§ URL¿¡¼­ Á¢¼Ó °¡´ÉÇÕ´Ï´Ù.
+? ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô´Ï´ï¿½ (30ï¿½ï¿½-1ï¿½ï¿½ ï¿½Ò¿ï¿½)
+   ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ URLï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 """)
 
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+ï»¿from datetime import datetime
 
 deployment = {
     'service_url': 'http://54.86.13.231:8000',
@@ -8,51 +8,51 @@ deployment = {
 }
 
 print('\n' + '='*80)
-print('MARBLO ¹èÆ÷ ¿Ï·á!')
+print('MARBLO ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!')
 print('='*80)
-print(f'\n¼­ºñ½º URL: {deployment["service_url"]}')
-print(f'API ¹®¼­: {deployment["api_docs"]}')
-print(f'Çï½º Ã¼Å©: {deployment["health_check"]}')
-print(f'\n¹èÆ÷ ½Ã°£: {deployment["timestamp"]}')
-print(f'¸®Àü: us-east-1 (¹öÁö´Ï¾Æ ºÏºÎ)')
-print(f'ÀÎ½ºÅÏ½º: i-09f4386f2b588b52b')
-print(f'Åº·ÂÀû IP: 54.86.13.231')
+print(f'\nï¿½ï¿½ï¿½ï¿½ URL: {deployment["service_url"]}')
+print(f'API ï¿½ï¿½ï¿½ï¿½: {deployment["api_docs"]}')
+print(f'ï¿½ï½º Ã¼Å©: {deployment["health_check"]}')
+print(f'\nï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½: {deployment["timestamp"]}')
+print(f'ï¿½ï¿½ï¿½ï¿½: us-east-1 (ï¿½ï¿½ï¿½ï¿½ï¿½Ï¾ï¿½ ï¿½Ïºï¿½)')
+print(f'ï¿½Î½ï¿½ï¿½Ï½ï¿½: i-09f4386f2b588b52b')
+print(f'Åºï¿½ï¿½ï¿½ï¿½ IP: 54.86.13.231')
 
 print('\n' + '='*80)
-print('¿¹»ó ¿ù°£ ¿î¿µ ºñ¿ë (°¡Á·¿ë)')
+print('ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½î¿µ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)')
 print('='*80)
 
 costs = [
-    ('EC2 t3.medium', 12, 'ÀÚÁ¤-¿ÀÀü10½Ã Á¾·á (60% Àý°¨)'),
-    ('RDS db.t3.micro', 0, 'AWS ÇÁ¸®Æ¼¾î (12°³¿ù ¹«·á)'),
-    ('ElastiCache', 12, 'Ä³½Ã ¼­¹ö'),
-    ('S3 ½ºÅä¸®Áö', 1, '10GB ±âÁØ'),
-    ('CloudFront CDN', 2, 'ÀÌ¹ÌÁö Àü¼Û'),
-    ('AWS Lambda', 0.10, 'EC2 ½ºÄÉÁÙ ÀÚµ¿È­'),
+    ('EC2 t3.medium', 12, 'ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½10ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (60% ï¿½ï¿½ï¿½ï¿½)'),
+    ('RDS db.t3.micro', 0, 'AWS ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½ (12ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)'),
+    ('ElastiCache', 12, 'Ä³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½'),
+    ('S3 ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½', 1, '10GB ï¿½ï¿½ï¿½ï¿½'),
+    ('CloudFront CDN', 2, 'ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½'),
+    ('AWS Lambda', 0.10, 'EC2 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½È­'),
 ]
 
-print('\nºñ¿ë ºÐ¼®:')
+print('\nï¿½ï¿½ï¿½ ï¿½Ð¼ï¿½:')
 print('-' * 80)
 total_usd = 0
 for name, cost, note in costs:
-    print(f'{name:25} ${cost:6.2f}/¿ù  - {note}')
+    print(f'{name:25} ${cost:6.2f}/ï¿½ï¿½  - {note}')
     total_usd += cost
 
 print('-' * 80)
 krw_rate = 1200
 total_krw = int(total_usd * krw_rate)
 
-print(f'\n¿ù°£ ÃÑ ºñ¿ë: ${total_usd:.2f} USD')
-print(f'È¯»ê (1USD={krw_rate}¿ø): {total_krw:,} KRW')
-print(f'¿¬°£ ÃÑ ºñ¿ë: ${total_usd*12:.2f} USD')
+print(f'\nï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½: ${total_usd:.2f} USD')
+print(f'È¯ï¿½ï¿½ (1USD={krw_rate}ï¿½ï¿½): {total_krw:,} KRW')
+print(f'ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½: ${total_usd*12:.2f} USD')
 
 print('\n' + '='*80)
-print('ºñ¿ë ÃÖÀûÈ­ Àû¿ë:')
+print('ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­ ï¿½ï¿½ï¿½ï¿½:')
 print('='*80)
-print('1. EC2 ½ºÄÉÁÙ: ÀÚµ¿ Á¾·á ¸ÅÀÏ ÀÚÁ¤ (±âÁ¸ $30 -> $12)')
-print('2. RDS ÇÁ¸®Æ¼¾î: Ã¹ 12°³¿ù ¹«·á')
-print('3. ÃÖ¼Ò »ç¾ç: t3 ¹ö½ºÆ® ÀÎ½ºÅÏ½º')
-print('4. °¡Á· Àü¿ë »ç¿ë: Æ®·¡ÇÈ ÃÖ¼ÒÈ­')
+print('1. EC2 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ $30 -> $12)')
+print('2. RDS ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½: Ã¹ 12ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½')
+print('3. ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½: t3 ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Î½ï¿½ï¿½Ï½ï¿½')
+print('4. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½: Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½È­')
 
 print('\n' + '='*80)
 

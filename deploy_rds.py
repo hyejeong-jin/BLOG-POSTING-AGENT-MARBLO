@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
@@ -16,7 +16,7 @@ CONFIG = {
 
 rds = boto3.client('rds', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
-print("\n?? Áö¿øµÇ´Â PostgreSQL ¹öÀü È®ÀÎ Áß...")
+print("\n?? ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ PostgreSQL ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½...")
 try:
     versions = rds.describe_db_engine_versions(
         Engine='postgres',
@@ -24,13 +24,13 @@ try:
     )
     if versions['DBEngineVersions']:
         version = versions['DBEngineVersions'][0]['EngineVersion']
-        print(f"? Áö¿ø ¹öÀü Ã£À½: PostgreSQL {version}")
+        print(f"? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½: PostgreSQL {version}")
     else:
         version = '15'
 except:
     version = '15'
 
-print(f"\n?? RDS PostgreSQL {version} »ý¼º Áß...")
+print(f"\n?? RDS PostgreSQL {version} ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
 try:
     rds.create_db_instance(
         DBInstanceIdentifier=f'{CONFIG["app_name"]}-db',
@@ -54,10 +54,10 @@ try:
             {'Key': 'Environment', 'Value': CONFIG['environment']}
         ]
     )
-    print(f"? RDS ÀÎ½ºÅÏ½º »ý¼º ½ÃÀÛ: {CONFIG['app_name']}-db")
+    print(f"? RDS ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {CONFIG['app_name']}-db")
     print(f"   PostgreSQL {version}")
-    print(f"   ? 5-10ºÐ ¼Ò¿ä (AWS ÄÜ¼Ö¿¡¼­ »óÅÂ È®ÀÎ °¡´É)")
+    print(f"   ? 5-10ï¿½ï¿½ ï¿½Ò¿ï¿½ (AWS ï¿½Ü¼Ö¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)")
 except Exception as e:
-    print(f"? ¿À·ù: {e}")
+    print(f"? ï¿½ï¿½ï¿½ï¿½: {e}")
 
 

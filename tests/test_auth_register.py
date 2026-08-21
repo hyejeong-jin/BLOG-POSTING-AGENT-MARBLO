@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for user registration endpoint.
 
 Tests cover:

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for photo management endpoints (Tasks 11-15).
 
 Tests cover:

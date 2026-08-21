@@ -1,4 +1,4 @@
-"""
+﻿"""
 Unit tests for the GenerationService class.
 
 Tests cover:

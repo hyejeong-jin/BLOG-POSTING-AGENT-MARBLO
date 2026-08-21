@@ -1,4 +1,4 @@
-"""
+﻿"""
 Blog Post Generation Service.
 
 This service handles generating blog posts based on photos, metadata, and writing style.

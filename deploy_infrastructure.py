@@ -1,14 +1,14 @@
-import boto3
+ï»¿import boto3
 import json
 import time
 from datetime import datetime
 
-# AWS ÀÚ°ÝÁõ¸í
+# AWS ï¿½Ú°ï¿½ï¿½ï¿½ï¿½ï¿½
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
 REGION = "us-east-1"
 
-# ¹èÆ÷ ¼³Á¤
+# ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 CONFIG = {
     "app_name": "marblo",
     "environment": "production",
@@ -20,85 +20,85 @@ CONFIG = {
 }
 
 print("\n" + "=" * 80)
-print("?? Marblo AWS ¹èÆ÷ ½ÃÀÛ (°£´ÜÇÑ ¹èÆ÷)")
+print("?? Marblo AWS ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)")
 print("=" * 80)
-print(f"½ÃÀÛ ½Ã°£: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-print(f"¸®Àü: {REGION} (us-east-1 - ¹öÁö´Ï¾Æ ºÏºÎ, ÃÖÀú°¡)")
+print(f"ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"ï¿½ï¿½ï¿½ï¿½: {REGION} (us-east-1 - ï¿½ï¿½ï¿½ï¿½ï¿½Ï¾ï¿½ ï¿½Ïºï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)")
 
-# EC2 Å¬¶óÀÌ¾ðÆ®
+# EC2 Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®
 ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 s3 = boto3.client('s3', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 rds = boto3.client('rds', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
-# 1. VPC »ý¼º
-print("\n?? Step 1: VPC »ý¼º/È®ÀÎ")
+# 1. VPC ï¿½ï¿½ï¿½ï¿½
+print("\n?? Step 1: VPC ï¿½ï¿½ï¿½ï¿½/È®ï¿½ï¿½")
 try:
     vpcs = ec2.describe_vpcs(Filters=[{'Name': 'tag:Name', 'Values': [f'{CONFIG["app_name"]}-vpc']}])
     if vpcs['Vpcs']:
         vpc_id = vpcs['Vpcs'][0]['VpcId']
-        print(f"? VPC ÀÌ¹Ì Á¸Àç: {vpc_id}")
+        print(f"? VPC ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {vpc_id}")
     else:
         vpc = ec2.create_vpc(CidrBlock='10.0.0.0/16', TagSpecifications=[{'ResourceType': 'vpc', 'Tags': [{'Key': 'Name', 'Value': f'{CONFIG["app_name"]}-vpc'}]}])
         vpc_id = vpc['Vpc']['VpcId']
-        print(f"? VPC »ý¼º: {vpc_id}")
+        print(f"? VPC ï¿½ï¿½ï¿½ï¿½: {vpc_id}")
 except Exception as e:
-    print(f"??  VPC ¿À·ù: {e}")
+    print(f"??  VPC ï¿½ï¿½ï¿½ï¿½: {e}")
     vpc_id = None
 
-# 2. º¸¾È ±×·ì »ý¼º
-print("\n?? Step 2: º¸¾È ±×·ì »ý¼º/È®ÀÎ")
+# 2. ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n?? Step 2: ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½/È®ï¿½ï¿½")
 try:
     sgs = ec2.describe_security_groups(Filters=[{'Name': 'tag:Name', 'Values': [f'{CONFIG["app_name"]}-sg']}, {'Name': 'vpc-id', 'Values': [vpc_id]}])
     if sgs['SecurityGroups']:
         sg_id = sgs['SecurityGroups'][0]['GroupId']
-        print(f"? º¸¾È ±×·ì ÀÌ¹Ì Á¸Àç: {sg_id}")
+        print(f"? ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {sg_id}")
     else:
         sg = ec2.create_security_group(GroupName=f'{CONFIG["app_name"]}-sg', Description='Marblo Security Group', VpcId=vpc_id, TagSpecifications=[{'ResourceType': 'security-group', 'Tags': [{'Key': 'Name', 'Value': f'{CONFIG["app_name"]}-sg'}]}])
         sg_id = sg['GroupId']
         
-        # SSH, HTTP, HTTPS Æ÷Æ® ¿ÀÇÂ
+        # SSH, HTTP, HTTPS ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         ec2.authorize_security_group_ingress(GroupId=sg_id, IpPermissions=[
             {'IpProtocol': 'tcp', 'FromPort': 22, 'ToPort': 22, 'IpRanges': [{'CidrIp': '0.0.0.0/0', 'Description': 'SSH'}]},
             {'IpProtocol': 'tcp', 'FromPort': 80, 'ToPort': 80, 'IpRanges': [{'CidrIp': '0.0.0.0/0', 'Description': 'HTTP'}]},
             {'IpProtocol': 'tcp', 'FromPort': 443, 'ToPort': 443, 'IpRanges': [{'CidrIp': '0.0.0.0/0', 'Description': 'HTTPS'}]},
             {'IpProtocol': 'tcp', 'FromPort': 8000, 'ToPort': 8000, 'IpRanges': [{'CidrIp': '0.0.0.0/0', 'Description': 'FastAPI'}]},
         ])
-        print(f"? º¸¾È ±×·ì »ý¼º: {sg_id}")
+        print(f"? ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½: {sg_id}")
 except Exception as e:
-    print(f"??  º¸¾È ±×·ì ¿À·ù: {e}")
+    print(f"??  ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
     sg_id = None
 
-# 3. S3 ¹öÅ¶ »ý¼º
-print("\n?? Step 3: S3 ¹öÅ¶ »ý¼º/È®ÀÎ")
+# 3. S3 ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½
+print("\n?? Step 3: S3 ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½/È®ï¿½ï¿½")
 try:
     s3.head_bucket(Bucket=CONFIG['s3_bucket'])
-    print(f"? S3 ¹öÅ¶ ÀÌ¹Ì Á¸Àç: {CONFIG['s3_bucket']}")
+    print(f"? S3 ï¿½ï¿½Å¶ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {CONFIG['s3_bucket']}")
 except:
     try:
         s3.create_bucket(Bucket=CONFIG['s3_bucket'])
-        print(f"? S3 ¹öÅ¶ »ý¼º: {CONFIG['s3_bucket']}")
+        print(f"? S3 ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½: {CONFIG['s3_bucket']}")
     except Exception as e:
-        print(f"??  S3 ¹öÅ¶ »ý¼º ½ÇÆÐ: {e}")
+        print(f"??  S3 ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
 
 print("\n" + "=" * 80)
-print("? AWS ÀÎÇÁ¶ó ÁØºñ ¿Ï·á!")
+print("? AWS ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½ ï¿½Ï·ï¿½!")
 print("=" * 80)
 print(f"""
-¹èÆ÷µÈ ¸®¼Ò½º:
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½:
   ? VPC: {vpc_id}
-  ? º¸¾È ±×·ì: {sg_id}
-  ? S3 ¹öÅ¶: {CONFIG['s3_bucket']}
+  ? ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½: {sg_id}
+  ? S3 ï¿½ï¿½Å¶: {CONFIG['s3_bucket']}
 
-´ÙÀ½ ´Ü°è:
-  1. Terraform ¹èÆ÷ (¶Ç´Â CloudFormation)
-  2. µ¥ÀÌÅÍº£ÀÌ½º ÃÊ±âÈ­
-  3. ¾ÖÇÃ¸®ÄÉÀÌ¼Ç ¹èÆ÷
+ï¿½ï¿½ï¿½ï¿½ ï¿½Ü°ï¿½:
+  1. Terraform ï¿½ï¿½ï¿½ï¿½ (ï¿½Ç´ï¿½ CloudFormation)
+  2. ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ ï¿½Ê±ï¿½È­
+  3. ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-¿¹»ó ºñ¿ë:
-  - EC2 t3.medium: $30/¿ù ¡æ $12/¿ù (¾ß°£ Á¾·á)
-  - RDS db.t3.micro: $0-12/¿ù (ÇÁ¸®Æ¼¾î)
-  - S3/CloudFront: $3-5/¿ù
-  - ÃÑ°è: $15-30/¿ù
+ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½:
+  - EC2 t3.medium: $30/ï¿½ï¿½ ï¿½ï¿½ $12/ï¿½ï¿½ (ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½)
+  - RDS db.t3.micro: $0-12/ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½Æ¼ï¿½ï¿½)
+  - S3/CloudFront: $3-5/ï¿½ï¿½
+  - ï¿½Ñ°ï¿½: $15-30/ï¿½ï¿½
 """)
 print("=" * 80)
 

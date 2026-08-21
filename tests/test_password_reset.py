@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for password reset endpoints.
 
 Tests cover:

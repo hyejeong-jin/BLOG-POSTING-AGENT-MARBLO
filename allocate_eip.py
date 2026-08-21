@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
@@ -8,34 +8,34 @@ ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_
 
 instance_id = "i-09f4386f2b588b52b"
 
-print("\n?? Åº·ÂÀû IP ÇÒ´ç Áß...")
+print("\n?? Åºï¿½ï¿½ï¿½ï¿½ IP ï¿½Ò´ï¿½ ï¿½ï¿½...")
 
 try:
-    # Åº·ÂÀû IP ÇÒ´ç
+    # Åºï¿½ï¿½ï¿½ï¿½ IP ï¿½Ò´ï¿½
     eip = ec2.allocate_address(Domain='vpc')
     allocation_id = eip['AllocationId']
     elastic_ip = eip['PublicIp']
     
-    print(f"? Åº·ÂÀû IP ÇÒ´ç: {elastic_ip}")
+    print(f"? Åºï¿½ï¿½ï¿½ï¿½ IP ï¿½Ò´ï¿½: {elastic_ip}")
     
-    # EC2 ÀÎ½ºÅÏ½º¿Í ¿¬°á
+    # EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     ec2.associate_address(
         InstanceId=instance_id,
         AllocationId=allocation_id
     )
     
-    print(f"? EC2 ÀÎ½ºÅÏ½º¿Í ¿¬°á ¿Ï·á")
+    print(f"? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
     
     print(f"\n{'='*80}")
-    print(f"?? ¼­ºñ½º URL:")
+    print(f"?? ï¿½ï¿½ï¿½ï¿½ URL:")
     print(f"{'='*80}")
     print(f"\n?? HTTP URL: http://{elastic_ip}:8000")
-    print(f"?? API ¹®¼­: http://{elastic_ip}:8000/docs")
+    print(f"?? API ï¿½ï¿½ï¿½ï¿½: http://{elastic_ip}:8000/docs")
     print(f"?? Swagger UI: http://{elastic_ip}:8000/redoc")
-    print(f"?? Çï½º Ã¼Å©: http://{elastic_ip}:8000/health")
+    print(f"?? ï¿½ï½º Ã¼Å©: http://{elastic_ip}:8000/health")
     print(f"\n{'='*80}")
     
 except Exception as e:
-    print(f"? ¿À·ù: {e}")
+    print(f"? ï¿½ï¿½ï¿½ï¿½: {e}")
 
 

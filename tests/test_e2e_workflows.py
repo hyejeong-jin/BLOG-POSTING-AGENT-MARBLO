@@ -1,4 +1,4 @@
-"""
+﻿"""
 End-to-End tests for complete user workflows.
 
 **Validates: Requirements 12.1 (Testing), 5.1 (Complete Workflow), 6.1 (Multi-user)**

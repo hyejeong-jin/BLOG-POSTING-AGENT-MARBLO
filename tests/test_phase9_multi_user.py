@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for Phase 9: Multi-User Support and Permissions.
 
 Tests cover:

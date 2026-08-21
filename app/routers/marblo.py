@@ -1,4 +1,4 @@
-"""
+﻿"""
 Marblo MVP Endpoints - Fast blog learning and post generation workflow.
 
 This router implements the core MVP workflow:
@@ -59,7 +59,7 @@ class GeneratePostRequest(BaseModel):
     """Request to generate post from photos."""
     
     photo_ids: List[UUID] = Field(..., description="List of photo IDs to use")
-    topic: Optional[str] = Field(None, description="Optional topic or context (e.g., '?�출에 ?�???�아보자')")
+    topic: Optional[str] = Field(None, description="Optional topic or context (e.g., '?�출에 ?�???�아보자')")
     additional_context: Optional[str] = Field(None, description="Additional context for generation")
 
 

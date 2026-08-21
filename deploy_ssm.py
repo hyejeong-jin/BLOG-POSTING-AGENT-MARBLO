@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 import json
 import time
 
@@ -8,19 +8,19 @@ REGION = "us-east-1"
 INSTANCE_ID = "i-09f4386f2b588b52b"
 
 print("\n" + "="*80)
-print("?? AWS Systems Manager¸¦ ÅëÇÑ ¹èÆ÷")
+print("?? AWS Systems Managerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")
 print("="*80)
 
 ssm = boto3.client('ssm', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 iam = boto3.client('iam', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
-# 1. IAM ¿ªÇÒ È®ÀÎ/»ý¼º
-print("\n1??  IAM ¿ªÇÒ ¼³Á¤...")
+# 1. IAM ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½
+print("\n1??  IAM ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 
 try:
     role_name = 'EC2-SSM-Role'
     
-    # ¿ªÇÒ »ý¼º
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     trust_policy = {
         "Version": "2012-10-17",
         "Statement": [
@@ -37,29 +37,29 @@ try:
             RoleName=role_name,
             AssumeRolePolicyDocument=json.dumps(trust_policy)
         )
-        print(f"   ? ¿ªÇÒ »ý¼º: {role_name}")
+        print(f"   ? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {role_name}")
     except:
-        print(f"   ??  ¿ªÇÒÀÌ ÀÌ¹Ì Á¸Àç: {role_name}")
+        print(f"   ??  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½: {role_name}")
     
-    # Á¤Ã¥ ¿¬°á
+    # ï¿½ï¿½Ã¥ ï¿½ï¿½ï¿½ï¿½
     iam.attach_role_policy(
         RoleName=role_name,
         PolicyArn='arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore'
     )
-    print(f"   ? SSM Á¤Ã¥ ¿¬°á")
+    print(f"   ? SSM ï¿½ï¿½Ã¥ ï¿½ï¿½ï¿½ï¿½")
     
 except Exception as e:
-    print(f"   ??  IAM ¿À·ù: {e}")
+    print(f"   ??  IAM ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 2. ¹èÆ÷ ½ºÅ©¸³Æ®
-print("\n2??  EC2¿¡ ¹èÆ÷ ¸í·É Àü¼Û...")
+# 2. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ®
+print("\n2??  EC2ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 
 deploy_script = """#!/bin/bash
 set -e
 
-echo "?? Marblo ¼­ºñ½º ¹èÆ÷..."
+echo "?? Marblo ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½..."
 
-# Python ¾Û »ý¼º
+# Python ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 cat > /tmp/marblo_app.py << 'PYEOF'
 import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -72,14 +72,14 @@ class MarbloHandler(BaseHTTPRequestHandler):
             response = {"status": "ok", "service": "marblo"}
             self.send_response(200)
         elif self.path == "/docs":
-            response = "<h1>Marblo API</h1><p>¹èÆ÷ ¼º°ø!</p>"
+            response = "<h1>Marblo API</h1><p>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½!</p>"
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
             self.wfile.write(response.encode())
             return
         else:
-            response = {"message": "Marblo ¼­ºñ½º ½ÇÇà Áß", "api": "/docs"}
+            response = {"message": "Marblo ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½", "api": "/docs"}
             self.send_response(200)
         
         self.send_header("Content-type", "application/json")
@@ -90,20 +90,20 @@ class MarbloHandler(BaseHTTPRequestHandler):
         pass
 
 server = HTTPServer(("0.0.0.0", 8000), MarbloHandler)
-print("? Marblo ¼­¹ö ½ÃÀÛ: http://0.0.0.0:8000")
+print("? Marblo ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: http://0.0.0.0:8000")
 server.serve_forever()
 PYEOF
 
-# ±âÁ¸ ÇÁ·Î¼¼½º Á¾·á
+# ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 pkill -f marblo_app.py || true
 sleep 1
 
-# ¼­¹ö ½ÃÀÛ (¹é±×¶ó¿îµå)
+# ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½×¶ï¿½ï¿½ï¿½)
 nohup python3 /tmp/marblo_app.py > /tmp/marblo.log 2>&1 &
 sleep 1
 
-echo "? ¹èÆ÷ ¿Ï·á!"
-echo "¼­ºñ½º URL: http://54.86.13.231:8000"
+echo "? ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!"
+echo "ï¿½ï¿½ï¿½ï¿½ URL: http://54.86.13.231:8000"
 """
 
 try:
@@ -114,10 +114,10 @@ try:
     )
     
     command_id = response['Command']['CommandId']
-    print(f"   ? ¸í·É Àü¼Û: {command_id}")
+    print(f"   ? ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {command_id}")
     
-    # ¸í·É ½ÇÇà ´ë±â
-    print("\n3??  ¹èÆ÷ ÁøÇà Áß...")
+    # ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    print("\n3??  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
     time.sleep(5)
     
     cmd_result = ssm.get_command_invocation(
@@ -129,24 +129,24 @@ try:
     output = cmd_result.get('StandardOutputContent', '')
     error = cmd_result.get('StandardErrorContent', '')
     
-    print(f"   »óÅÂ: {status}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½: {status}")
     if output:
-        print(f"   Ãâ·Â:\n{output}")
+        print(f"   ï¿½ï¿½ï¿½:\n{output}")
     if error:
-        print(f"   ¿À·ù:\n{error}")
+        print(f"   ï¿½ï¿½ï¿½ï¿½:\n{error}")
     
 except Exception as e:
-    print(f"   ? Systems Manager ¿À·ù: {e}")
+    print(f"   ? Systems Manager ï¿½ï¿½ï¿½ï¿½: {e}")
 
 print("\n" + "="*80)
-print("? ¹èÆ÷ ¿Ï·á!")
+print("? ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
 print("="*80)
 print("""
-¼­ºñ½º URL: http://54.86.13.231:8000
-API ¹®¼­: http://54.86.13.231:8000/docs
-Çï½º Ã¼Å©: http://54.86.13.231:8000/health
+ï¿½ï¿½ï¿½ï¿½ URL: http://54.86.13.231:8000
+API ï¿½ï¿½ï¿½ï¿½: http://54.86.13.231:8000/docs
+ï¿½ï½º Ã¼Å©: http://54.86.13.231:8000/health
 
-ÀÌÁ¦ ºê¶ó¿ìÀú¿¡¼­ Á¢¼ÓÇÏ½Ã±â ¹Ù¶ø´Ï´Ù.
+ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ã±ï¿½ ï¿½Ù¶ï¿½ï¿½Ï´ï¿½.
 """)
 
 

@@ -1,4 +1,4 @@
-"""
+﻿"""
 Environment configuration and settings management for Marblo application.
 
 This module loads configuration from environment variables and provides

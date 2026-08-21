@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 import paramiko
 import time
 import os
@@ -10,66 +10,66 @@ INSTANCE_ID = "i-09f4386f2b588b52b"
 ELASTIC_IP = "54.86.13.231"
 
 print("\n" + "="*80)
-print("?? Marblo ÀÚµ¿ ¹èÆ÷ ½ÃÀÛ")
+print("?? Marblo ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")
 print("="*80)
 
-# EC2 ÀÎ½ºÅÏ½º Á¤º¸ È®ÀÎ
+# EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
-print("\n1??  EC2 ÀÎ½ºÅÏ½º È®ÀÎ...")
+print("\n1??  EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ È®ï¿½ï¿½...")
 try:
     instances = ec2.describe_instances(InstanceIds=[INSTANCE_ID])
     instance = instances['Reservations'][0]['Instances'][0]
     
-    print(f"   »óÅÂ: {instance['State']['Name']}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½: {instance['State']['Name']}")
     print(f"   Public IP: {ELASTIC_IP}")
     print(f"   Private IP: {instance.get('PrivateIpAddress', 'N/A')}")
     
     if instance['State']['Name'] != 'running':
-        print("   ??  ÀÎ½ºÅÏ½º°¡ ½ÇÇà ÁßÀÌ ¾Æ´Õ´Ï´Ù!")
+        print("   ??  ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Õ´Ï´ï¿½!")
         exit(1)
     
 except Exception as e:
-    print(f"   ? ¿À·ù: {e}")
+    print(f"   ? ï¿½ï¿½ï¿½ï¿½: {e}")
     exit(1)
 
-# SSH ÁØºñ
-print("\n2??  SSH ¿¬°á ÁØºñ...")
+# SSH ï¿½Øºï¿½
+print("\n2??  SSH ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½...")
 
-# EC2 Å° ½Ö »ý¼º
-print("   EC2 Å° ½Ö »ý¼º Áß...")
+# EC2 Å° ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("   EC2 Å° ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
 try:
     key_response = ec2.create_key_pair(KeyName='marblo-deploy-key')
     key_material = key_response['KeyMaterial']
     
-    # ·ÎÄÃ¿¡ Å° ÀúÀå
+    # ï¿½ï¿½ï¿½Ã¿ï¿½ Å° ï¿½ï¿½ï¿½ï¿½
     key_path = 'marblo-deploy-key.pem'
     with open(key_path, 'w') as f:
         f.write(key_material)
     
-    # ±ÇÇÑ ¼³Á¤
+    # ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     os.chmod(key_path, 0o400)
     
-    print(f"   ? Å° »ý¼º ¿Ï·á: {key_path}")
+    print(f"   ? Å° ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½: {key_path}")
     
 except Exception as e:
     if 'already exists' in str(e):
-        print(f"   ??  Å°°¡ ÀÌ¹Ì Á¸ÀçÇÕ´Ï´Ù")
+        print(f"   ??  Å°ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½")
         key_path = 'marblo-deploy-key.pem'
     else:
-        print(f"   ? ¿À·ù: {e}")
+        print(f"   ? ï¿½ï¿½ï¿½ï¿½: {e}")
         exit(1)
 
-# SSH ¿¬°á ½Ãµµ
-print("\n3??  SSH ¿¬°á Å×½ºÆ®...")
-time.sleep(5)  # EC2 ºÎÆÃ ½Ã°£ ´ë±â
+# SSH ï¿½ï¿½ï¿½ï¿½ ï¿½Ãµï¿½
+print("\n3??  SSH ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®...")
+time.sleep(5)  # EC2 ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½
 
 for attempt in range(10):
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
-        # SSH ¿¬°á
+        # SSH ï¿½ï¿½ï¿½ï¿½
         ssh.connect(
             ELASTIC_IP,
             username='ubuntu',
@@ -78,26 +78,26 @@ for attempt in range(10):
             banner_timeout=10
         )
         
-        print(f"   ? SSH ¿¬°á ¼º°ø!")
+        print(f"   ? SSH ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½!")
         
-        # ¿¬°á Å×½ºÆ®
+        # ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®
         stdin, stdout, stderr = ssh.exec_command('echo "SSH OK"')
-        print(f"   ÀÀ´ä: {stdout.read().decode().strip()}")
+        print(f"   ï¿½ï¿½ï¿½ï¿½: {stdout.read().decode().strip()}")
         
         ssh.close()
         break
         
     except Exception as e:
         if attempt < 9:
-            print(f"   ? Àç½Ãµµ {attempt+1}/10... ({str(e)[:50]})")
+            print(f"   ? ï¿½ï¿½Ãµï¿½ {attempt+1}/10... ({str(e)[:50]})")
             time.sleep(3)
         else:
-            print(f"   ? SSH ¿¬°á ½ÇÆÐ: {e}")
+            print(f"   ? SSH ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {e}")
             exit(1)
 
 print("\n" + "="*80)
-print("? ¹èÆ÷ ÁØºñ ¿Ï·á!")
+print("? ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½ ï¿½Ï·ï¿½!")
 print("="*80)
-print(f"\nÀÌÁ¦ ¹èÆ÷ ½ºÅ©¸³Æ®¸¦ ½ÇÇàÇÕ´Ï´Ù...")
+print(f"\nï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½...")
 
 

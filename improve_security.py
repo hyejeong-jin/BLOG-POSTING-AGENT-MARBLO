@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
@@ -7,18 +7,18 @@ REGION = "us-east-1"
 ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
 print("\n" + "="*80)
-print("?? º¸¾È ±×·ì ¼³Á¤ °³¼±")
+print("?? ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")
 print("="*80)
 
 sg_id = "sg-0c353d082d04fec39"
 
-# SSH ±ÔÄ¢ °³¼±
-print("\n1??  SSH Æ÷Æ® º¸¾È °³¼±...")
-print("   ÇöÀç: ¸ðµç IP¿¡ °³¹æ (0.0.0.0/0)")
-print("   °³¼±: EC2 ÀÎ½ºÅÏ½º ¿¬°á ¼­ºñ½º IP¸¸ Çã¿ë")
+# SSH ï¿½ï¿½Ä¢ ï¿½ï¿½ï¿½ï¿½
+print("\n1??  SSH ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
+print("   ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ IPï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (0.0.0.0/0)")
+print("   ï¿½ï¿½ï¿½ï¿½: EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ IPï¿½ï¿½ ï¿½ï¿½ï¿½")
 
 try:
-    # ±âÁ¸ SSH ±ÔÄ¢ »èÁ¦
+    # ï¿½ï¿½ï¿½ï¿½ SSH ï¿½ï¿½Ä¢ ï¿½ï¿½ï¿½ï¿½
     ec2.revoke_security_group_ingress(
         GroupId=sg_id,
         IpPermissions=[
@@ -30,12 +30,12 @@ try:
             }
         ]
     )
-    print("   ? ±âÁ¸ SSH ±ÔÄ¢ Á¦°Å")
+    print("   ? ï¿½ï¿½ï¿½ï¿½ SSH ï¿½ï¿½Ä¢ ï¿½ï¿½ï¿½ï¿½")
 except Exception as e:
     if 'does not exist' not in str(e):
         print(f"   ??  {e}")
 
-# »õ·Î¿î SSH ±ÔÄ¢ Ãß°¡ (EC2 ÀÎ½ºÅÏ½º ¿¬°á ¼­ºñ½º)
+# ï¿½ï¿½ï¿½Î¿ï¿½ SSH ï¿½ï¿½Ä¢ ï¿½ß°ï¿½ (EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 try:
     ec2.authorize_security_group_ingress(
         GroupId=sg_id,
@@ -53,13 +53,13 @@ try:
             }
         ]
     )
-    print("   ? EC2 Instance Connect ¼­ºñ½º IP Ãß°¡ (18.206.107.24/29)")
+    print("   ? EC2 Instance Connect ï¿½ï¿½ï¿½ï¿½ IP ï¿½ß°ï¿½ (18.206.107.24/29)")
 except Exception as e:
     if 'already exists' not in str(e):
         print(f"   ??  {e}")
 
-# ÇöÀç ±ÔÄ¢ È®ÀÎ
-print("\n2??  ÃÖÁ¾ ÀÎ¹Ù¿îµå ±ÔÄ¢:")
+# ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¢ È®ï¿½ï¿½
+print("\n2??  ï¿½ï¿½ï¿½ï¿½ ï¿½Î¹Ù¿ï¿½ï¿½ ï¿½ï¿½Ä¢:")
 try:
     sgs = ec2.describe_security_groups(GroupIds=[sg_id])
     sg = sgs['SecurityGroups'][0]
@@ -73,22 +73,22 @@ try:
             for ip_range in rule['IpRanges']:
                 cidr = ip_range.get('CidrIp', 'N/A')
                 desc = ip_range.get('Description', '')
-                print(f"   - ÇÁ·ÎÅäÄÝ: {protocol}, Æ÷Æ®: {from_port}-{to_port}, CIDR: {cidr} ({desc})")
+                print(f"   - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {protocol}, ï¿½ï¿½Æ®: {from_port}-{to_port}, CIDR: {cidr} ({desc})")
         
 except Exception as e:
-    print(f"   ??  ¿À·ù: {e}")
+    print(f"   ??  ï¿½ï¿½ï¿½ï¿½: {e}")
 
 print("\n" + "="*80)
-print("? º¸¾È ±×·ì ¼³Á¤ ¿Ï·á!")
+print("? ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
 print("="*80)
 print("""
-º¸¾È »óÅÂ:
-  ? SSH (Æ÷Æ® 22): EC2 Instance Connect¸¸ Çã¿ë
-  ? HTTP (Æ÷Æ® 80): ¸ðµç IP Çã¿ë
-  ? HTTPS (Æ÷Æ® 443): ¸ðµç IP Çã¿ë
-  ? FastAPI (Æ÷Æ® 8000): ¸ðµç IP Çã¿ë
+ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½:
+  ? SSH (ï¿½ï¿½Æ® 22): EC2 Instance Connectï¿½ï¿½ ï¿½ï¿½ï¿½
+  ? HTTP (ï¿½ï¿½Æ® 80): ï¿½ï¿½ï¿½ IP ï¿½ï¿½ï¿½
+  ? HTTPS (ï¿½ï¿½Æ® 443): ï¿½ï¿½ï¿½ IP ï¿½ï¿½ï¿½
+  ? FastAPI (ï¿½ï¿½Æ® 8000): ï¿½ï¿½ï¿½ IP ï¿½ï¿½ï¿½
 
-ÀÌÁ¦ ¾ÈÀüÇÕ´Ï´Ù!
+ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!
 """)
 
 

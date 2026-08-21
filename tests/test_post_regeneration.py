@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for post regeneration endpoint (Task 22).
 
 Tests specifically for POST /api/posts/{post_id}/regenerate endpoint.

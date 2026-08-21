@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
 SECRET_KEY = "YOUR_AWS_SECRET_KEY"
@@ -9,46 +9,46 @@ ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_
 vpc_id = "vpc-077f48a855caba525"
 instance_id = "i-09f4386f2b588b52b"
 
-print("\n?? ³×Æ®¿öÅ· ±¸¼º Áß...")
+print("\n?? ï¿½ï¿½Æ®ï¿½ï¿½Å· ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
 
-# 1. ÀÎÅÍ³Ý °ÔÀÌÆ®¿þÀÌ »ý¼º ¹× ¿¬°á
+# 1. ï¿½ï¿½ï¿½Í³ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 try:
     igw = ec2.create_internet_gateway()
     igw_id = igw['InternetGateway']['InternetGatewayId']
-    print(f"? ÀÎÅÍ³Ý °ÔÀÌÆ®¿þÀÌ »ý¼º: {igw_id}")
+    print(f"? ï¿½ï¿½ï¿½Í³ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {igw_id}")
     
     ec2.attach_internet_gateway(InternetGatewayId=igw_id, VpcId=vpc_id)
-    print(f"? VPC¿Í ¿¬°á ¿Ï·á")
+    print(f"? VPCï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
 except Exception as e:
-    print(f"??  IGW ¿À·ù: {e}")
+    print(f"??  IGW ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 2. Åº·ÂÀû IP ÇÒ´ç ¹× ¿¬°á
+# 2. Åºï¿½ï¿½ï¿½ï¿½ IP ï¿½Ò´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 try:
     eip = ec2.allocate_address(Domain='vpc')
     allocation_id = eip['AllocationId']
     elastic_ip = eip['PublicIp']
     
-    print(f"? Åº·ÂÀû IP ÇÒ´ç: {elastic_ip}")
+    print(f"? Åºï¿½ï¿½ï¿½ï¿½ IP ï¿½Ò´ï¿½: {elastic_ip}")
     
-    # EC2 ÀÎ½ºÅÏ½º¿Í ¿¬°á
+    # EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     ec2.associate_address(
         InstanceId=instance_id,
         AllocationId=allocation_id
     )
     
-    print(f"? EC2 ÀÎ½ºÅÏ½º¿Í ¿¬°á ¿Ï·á")
+    print(f"? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
     
     print(f"\n{'='*80}")
-    print(f"?? ¼­ºñ½º URL:")
+    print(f"?? ï¿½ï¿½ï¿½ï¿½ URL:")
     print(f"{'='*80}")
     print(f"\n?? HTTP URL: http://{elastic_ip}:8000")
-    print(f"?? API ¹®¼­: http://{elastic_ip}:8000/docs")
+    print(f"?? API ï¿½ï¿½ï¿½ï¿½: http://{elastic_ip}:8000/docs")
     print(f"?? Swagger UI: http://{elastic_ip}:8000/redoc")
-    print(f"?? Çï½º Ã¼Å©: http://{elastic_ip}:8000/health")
-    print(f"\n? ¾ÖÇÃ¸®ÄÉÀÌ¼Ç ¹èÆ÷ ÈÄ Áï½Ã Á¢¼Ó °¡´ÉÇÕ´Ï´Ù!")
+    print(f"?? ï¿½ï½º Ã¼Å©: http://{elastic_ip}:8000/health")
+    print(f"\n? ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½!")
     print(f"{'='*80}\n")
     
 except Exception as e:
-    print(f"? EIP ¿À·ù: {e}")
+    print(f"? EIP ï¿½ï¿½ï¿½ï¿½: {e}")
 
 

@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 import time
 
 ACCESS_KEY = "YOUR_AWS_ACCESS_KEY"
@@ -11,46 +11,46 @@ ssm = boto3.client('ssm', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_
 instance_id = "i-09f4386f2b588b52b"
 
 print("\n" + "="*80)
-print("?? EC2 ÀÎ½ºÅÏ½º ½ÃÀÛ Áß...")
+print("?? EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
 print("="*80)
 
-# 1. EC2 ÀÎ½ºÅÏ½º ½ÃÀÛ
-print("\n1??  EC2 ÀÎ½ºÅÏ½º ½ÃÀÛ...")
+# 1. EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½
+print("\n1??  EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 try:
     ec2.start_instances(InstanceIds=[instance_id])
-    print(f"? ½ÃÀÛ ¸í·É Àü¼Û: {instance_id}")
+    print(f"? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {instance_id}")
     
-    # ÀÎ½ºÅÏ½º ½ÇÇà ´ë±â
-    print("   ? ÀÎ½ºÅÏ½º ½ÇÇà ´ë±â Áß (1-2ºÐ)...")
+    # ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    print("   ? ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ (1-2ï¿½ï¿½)...")
     waiter = ec2.get_waiter('instance_running')
     waiter.wait(InstanceIds=[instance_id])
     
-    print(f"? ÀÎ½ºÅÏ½º ½ÇÇà ¿Ï·á")
+    print(f"? ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½")
     
-    # »óÅÂ È®ÀÎ
+    # ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
     instances = ec2.describe_instances(InstanceIds=[instance_id])
     instance = instances['Reservations'][0]['Instances'][0]
-    print(f"   »óÅÂ: {instance['State']['Name']}")
-    print(f"   °ø°³ IP: {instance.get('PublicIpAddress', 'N/A')}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½: {instance['State']['Name']}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½ IP: {instance.get('PublicIpAddress', 'N/A')}")
     
 except Exception as e:
-    print(f"? ¿À·ù: {e}")
+    print(f"? ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 2. ÀÚµ¿ ½ºÄÉÁÙ ºñÈ°¼ºÈ­ (Å×½ºÆ®¿ë)
-print("\n2??  ½ºÄÉÁÙ È®ÀÎ...")
+# 2. ï¿½Úµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­ (ï¿½×½ï¿½Æ®ï¿½ï¿½)
+print("\n2??  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½...")
 try:
     events = boto3.client('events', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
     
     rules = events.list_rules()
     for rule in rules.get('Rules', []):
         if 'marblo' in rule['Name']:
-            print(f"   ±ÔÄ¢: {rule['Name']} - {rule['State']}")
+            print(f"   ï¿½ï¿½Ä¢: {rule['Name']} - {rule['State']}")
     
 except Exception as e:
-    print(f"   ¿À·ù: {e}")
+    print(f"   ï¿½ï¿½ï¿½ï¿½: {e}")
 
 print("\n" + "="*80)
-print("? EC2 ½ÃÀÛ ¿Ï·á!")
+print("? EC2 ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
 print("="*80)
 
 

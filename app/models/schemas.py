@@ -1,4 +1,4 @@
-"""
+﻿"""
 Pydantic schemas for request/response validation.
 
 This module defines all request and response schemas used throughout the API.

@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 import time
 from datetime import datetime
 
@@ -8,13 +8,13 @@ REGION = "us-east-1"
 
 ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
-print("\n? °ø°³ IP ÇÒ´ç ´ë±â Áß...")
-print("   (ÃÖ´ë 10ºÐ, 1ºÐ¸¶´Ù È®ÀÎ)\n")
+print("\n? ï¿½ï¿½ï¿½ï¿½ IP ï¿½Ò´ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½...")
+print("   (ï¿½Ö´ï¿½ 10ï¿½ï¿½, 1ï¿½Ð¸ï¿½ï¿½ï¿½ È®ï¿½ï¿½)\n")
 
 instance_id = "i-09f4386f2b588b52b"
 public_ip = None
 start_time = time.time()
-max_wait = 600  # 10ºÐ
+max_wait = 600  # 10ï¿½ï¿½
 
 while (time.time() - start_time) < max_wait:
     try:
@@ -23,26 +23,26 @@ while (time.time() - start_time) < max_wait:
         public_ip = instance.get('PublicIpAddress')
         
         if public_ip:
-            print(f"? °ø°³ IP ÇÒ´çµÊ: {public_ip}")
+            print(f"? ï¿½ï¿½ï¿½ï¿½ IP ï¿½Ò´ï¿½ï¿½: {public_ip}")
             break
         else:
             elapsed = int(time.time() - start_time)
-            print(f"   ÁøÇà Áß... ({elapsed}ÃÊ)")
+            print(f"   ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½... ({elapsed}ï¿½ï¿½)")
     except Exception as e:
-        print(f"   ¿À·ù: {e}")
+        print(f"   ï¿½ï¿½ï¿½ï¿½: {e}")
     
-    time.sleep(60)  # 1ºÐ ´ë±â
+    time.sleep(60)  # 1ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 if public_ip:
     print(f"\n{'='*80}")
-    print(f"?? ¼­ºñ½º URL:")
+    print(f"?? ï¿½ï¿½ï¿½ï¿½ URL:")
     print(f"{'='*80}")
     print(f"\n?? HTTP URL: http://{public_ip}:8000")
-    print(f"?? API ¹®¼­: http://{public_ip}:8000/docs")
+    print(f"?? API ï¿½ï¿½ï¿½ï¿½: http://{public_ip}:8000/docs")
     print(f"?? Swagger UI: http://{public_ip}:8000/redoc")
-    print(f"?? Çï½º Ã¼Å©: http://{public_ip}:8000/health")
+    print(f"?? ï¿½ï½º Ã¼Å©: http://{public_ip}:8000/health")
     print(f"\n{'='*80}")
 else:
-    print("\n??  °ø°³ IP ÇÒ´ç ´ë±â ÁßÀÔ´Ï´Ù. AWS ÄÜ¼Ö¿¡¼­ È®ÀÎÇÏ¼¼¿ä.")
+    print("\n??  ï¿½ï¿½ï¿½ï¿½ IP ï¿½Ò´ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô´Ï´ï¿½. AWS ï¿½Ü¼Ö¿ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½.")
 
 

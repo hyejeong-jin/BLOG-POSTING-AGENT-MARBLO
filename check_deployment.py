@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 import json
 from datetime import datetime
 
@@ -7,70 +7,70 @@ SECRET_KEY = "YOUR_AWS_SECRET_KEY"
 REGION = "us-east-1"
 
 print("\n" + "=" * 80)
-print("?? AWS ¹èÆ÷ »óÅÂ È®ÀÎ")
+print("?? AWS ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½")
 print("=" * 80)
-print(f"½Ã°£: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-print(f"¸®Àü: {REGION}")
+print(f"ï¿½Ã°ï¿½: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"ï¿½ï¿½ï¿½ï¿½: {REGION}")
 
 ec2 = boto3.client('ec2', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 rds = boto3.client('rds', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 s3 = boto3.client('s3', region_name=REGION, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
-# 1. EC2 Á¤º¸
+# 1. EC2 ï¿½ï¿½ï¿½ï¿½
 print("\n" + "-" * 80)
-print("???  EC2 ÀÎ½ºÅÏ½º")
+print("???  EC2 ï¿½Î½ï¿½ï¿½Ï½ï¿½")
 print("-" * 80)
 try:
     instances = ec2.describe_instances(Filters=[{'Name': 'tag:Name', 'Values': ['marblo-instance']}])
     for reservation in instances['Reservations']:
         for instance in reservation['Instances']:
             print(f"ID: {instance['InstanceId']}")
-            print(f"Å¸ÀÔ: {instance['InstanceType']}")
-            print(f"»óÅÂ: {instance['State']['Name']}")
-            print(f"°ø°³ IP: {instance.get('PublicIpAddress', 'N/A (¾ÆÁ÷ ÇÒ´ç Áß)')}")
-            print(f"°³ÀÎ IP: {instance.get('PrivateIpAddress', 'N/A')}")
-            print(f"½ÃÀÛ ½Ã°£: {instance['LaunchTime']}")
+            print(f"Å¸ï¿½ï¿½: {instance['InstanceType']}")
+            print(f"ï¿½ï¿½ï¿½ï¿½: {instance['State']['Name']}")
+            print(f"ï¿½ï¿½ï¿½ï¿½ IP: {instance.get('PublicIpAddress', 'N/A (ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ ï¿½ï¿½)')}")
+            print(f"ï¿½ï¿½ï¿½ï¿½ IP: {instance.get('PrivateIpAddress', 'N/A')}")
+            print(f"ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½: {instance['LaunchTime']}")
 except Exception as e:
-    print(f"¿À·ù: {e}")
+    print(f"ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 2. RDS Á¤º¸
+# 2. RDS ï¿½ï¿½ï¿½ï¿½
 print("\n" + "-" * 80)
-print("?? RDS µ¥ÀÌÅÍº£ÀÌ½º")
+print("?? RDS ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½")
 print("-" * 80)
 try:
     db_instances = rds.describe_db_instances()
     for db in db_instances.get('DBInstances', []):
         if 'marblo' in db['DBInstanceIdentifier']:
             print(f"ID: {db['DBInstanceIdentifier']}")
-            print(f"¿£Áø: {db['Engine']} {db['EngineVersion']}")
-            print(f"Å¬·¡½º: {db['DBInstanceClass']}")
-            print(f"»óÅÂ: {db['DBInstanceStatus']}")
-            print(f"¿£µåÆ÷ÀÎÆ®: {db.get('Endpoint', {}).get('Address', 'N/A (±¸¼º Áß)')}")
-            print(f"Æ÷Æ®: {db.get('Endpoint', {}).get('Port', 5432)}")
-            print(f"¸¶½ºÅÍ »ç¿ëÀÚ: {db['MasterUsername']}")
-            print(f"µ¥ÀÌÅÍº£ÀÌ½º: {db.get('DBName', 'N/A')}")
-            print(f"ÀúÀå¼Ò: {db['AllocatedStorage']} GB")
-            print(f"¹é¾÷ º¸°ü: {db['BackupRetentionPeriod']}ÀÏ")
-            print(f"»ý¼º ½Ã°£: {db['InstanceCreateTime']}")
+            print(f"ï¿½ï¿½ï¿½ï¿½: {db['Engine']} {db['EngineVersion']}")
+            print(f"Å¬ï¿½ï¿½ï¿½ï¿½: {db['DBInstanceClass']}")
+            print(f"ï¿½ï¿½ï¿½ï¿½: {db['DBInstanceStatus']}")
+            print(f"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®: {db.get('Endpoint', {}).get('Address', 'N/A (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½)')}")
+            print(f"ï¿½ï¿½Æ®: {db.get('Endpoint', {}).get('Port', 5432)}")
+            print(f"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½: {db['MasterUsername']}")
+            print(f"ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½: {db.get('DBName', 'N/A')}")
+            print(f"ï¿½ï¿½ï¿½ï¿½ï¿½: {db['AllocatedStorage']} GB")
+            print(f"ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: {db['BackupRetentionPeriod']}ï¿½ï¿½")
+            print(f"ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½: {db['InstanceCreateTime']}")
 except Exception as e:
-    print(f"¿À·ù: {e}")
+    print(f"ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 3. S3 Á¤º¸
+# 3. S3 ï¿½ï¿½ï¿½ï¿½
 print("\n" + "-" * 80)
-print("?? S3 ¹öÅ¶")
+print("?? S3 ï¿½ï¿½Å¶")
 print("-" * 80)
 try:
     buckets = s3.list_buckets()
     for bucket in buckets.get('Buckets', []):
         if 'marblo' in bucket['Name']:
-            print(f"ÀÌ¸§: {bucket['Name']}")
-            print(f"»ý¼º: {bucket['CreationDate']}")
+            print(f"ï¿½Ì¸ï¿½: {bucket['Name']}")
+            print(f"ï¿½ï¿½ï¿½ï¿½: {bucket['CreationDate']}")
 except Exception as e:
-    print(f"¿À·ù: {e}")
+    print(f"ï¿½ï¿½ï¿½ï¿½: {e}")
 
-# 4. VPC/º¸¾È ±×·ì
+# 4. VPC/ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½
 print("\n" + "-" * 80)
-print("?? ³×Æ®¿öÅ·")
+print("?? ï¿½ï¿½Æ®ï¿½ï¿½Å·")
 print("-" * 80)
 try:
     vpcs = ec2.describe_vpcs(Filters=[{'Name': 'tag:Name', 'Values': ['marblo-vpc']}])
@@ -80,19 +80,19 @@ try:
         
     sgs = ec2.describe_security_groups(Filters=[{'Name': 'tag:Name', 'Values': ['marblo-sg']}])
     for sg in sgs['SecurityGroups']:
-        print(f"\nº¸¾È ±×·ì ID: {sg['GroupId']}")
-        print(f"ÀÌ¸§: {sg['GroupName']}")
-        print(f"±ÔÄ¢:")
+        print(f"\nï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ ID: {sg['GroupId']}")
+        print(f"ï¿½Ì¸ï¿½: {sg['GroupName']}")
+        print(f"ï¿½ï¿½Ä¢:")
         for rule in sg.get('IpPermissions', []):
             from_port = rule.get('FromPort', 'N/A')
             to_port = rule.get('ToPort', 'N/A')
             protocol = rule.get('IpProtocol', 'N/A')
-            print(f"  - ÇÁ·ÎÅäÄÝ: {protocol}, Æ÷Æ®: {from_port}-{to_port}")
+            print(f"  - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {protocol}, ï¿½ï¿½Æ®: {from_port}-{to_port}")
 except Exception as e:
-    print(f"¿À·ù: {e}")
+    print(f"ï¿½ï¿½ï¿½ï¿½: {e}")
 
 print("\n" + "=" * 80)
-print("? ¹èÆ÷ »óÅÂ È®ÀÎ ¿Ï·á")
+print("? ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½Ï·ï¿½")
 print("=" * 80)
 
 

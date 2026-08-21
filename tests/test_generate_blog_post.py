@@ -1,4 +1,4 @@
-"""
+﻿"""
 Integration tests for generate_blog_post function.
 
 Tests the complete end-to-end blog post generation flow including:

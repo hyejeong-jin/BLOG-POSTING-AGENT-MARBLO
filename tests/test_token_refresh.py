@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for token refresh endpoint.
 
 Tests cover:

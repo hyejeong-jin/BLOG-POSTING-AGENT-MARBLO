@@ -1,4 +1,4 @@
-"""
+﻿"""
 FastAPI routers for Marblo API endpoints.
 
 This module exports all router instances for registration in the main app.

@@ -1,4 +1,4 @@
-import boto3
+ï»¿import boto3
 import paramiko
 import time
 
@@ -7,26 +7,26 @@ SECRET_KEY = "YOUR_AWS_SECRET_KEY"
 REGION = "us-east-1"
 ELASTIC_IP = "54.86.13.231"
 
-print("?? °£´ÜÇÑ ¹èÆ÷ ½ÃÀÛ...")
+print("?? ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...")
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
 try:
-    print("SSH ¿¬°á Áß...")
+    print("SSH ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
     for i in range(20):
         try:
             ssh.connect(ELASTIC_IP, username="ubuntu", key_filename="marblo-deploy-key.pem", timeout=5)
-            print("? SSH ¿¬°áµÊ")
+            print("? SSH ï¿½ï¿½ï¿½ï¿½ï¿½")
             break
         except:
             if i < 19:
                 time.sleep(2)
-                print(f"Àç½Ãµµ {i+1}...")
+                print(f"ï¿½ï¿½Ãµï¿½ {i+1}...")
             else:
                 raise
     
-    # Python °£´Ü ¾Û »ý¼º
+    # Python ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     app_code = """
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 import json
@@ -42,19 +42,19 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
-            self.wfile.write(b"<h1>Marblo API ¹®¼­</h1><p>¹èÆ÷ ÁøÇà Áß...</p>")
+            self.wfile.write(b"<h1>Marblo API ï¿½ï¿½ï¿½ï¿½</h1><p>ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...</p>")
         else:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
-            self.wfile.write(b"<h1>Marblo ¼­ºñ½º</h1><p>¹èÆ÷ ¿Ï·á!</p><a href='/docs'>API ¹®¼­</a>")
+            self.wfile.write(b"<h1>Marblo ï¿½ï¿½ï¿½ï¿½</h1><p>ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!</p><a href='/docs'>API ï¿½ï¿½ï¿½ï¿½</a>")
 
 server = HTTPServer(("0.0.0.0", 8000), Handler)
-print("¼­¹ö ½ÃÀÛ: http://0.0.0.0:8000")
+print("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: http://0.0.0.0:8000")
 server.serve_forever()
 """
     
-    # EC2¿¡ ¾Û ÀÛ¼º ¹× ½ÇÇà
+    # EC2ï¿½ï¿½ ï¿½ï¿½ ï¿½Û¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     cmd = f"""
 cat > /tmp/app.py << 'PYEOF'
 {app_code}
@@ -66,7 +66,7 @@ sleep 1
 ps aux | grep app.py
 """
     
-    print("¾Û ¹èÆ÷ Áß...")
+    print("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...")
     stdin, stdout, stderr = ssh.exec_command(cmd)
     stdout.channel.recv_exit_status()
     output = stdout.read().decode()
@@ -74,10 +74,10 @@ ps aux | grep app.py
     
     ssh.close()
     
-    print("\n? ¹èÆ÷ ¿Ï·á!")
-    print("http://54.86.13.231:8000 ¿¡¼­ Á¢¼Ó °¡´É")
+    print("\n? ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!")
+    print("http://54.86.13.231:8000 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")
 
 except Exception as e:
-    print(f"¿À·ù: {e}")
+    print(f"ï¿½ï¿½ï¿½ï¿½: {e}")
 
 
