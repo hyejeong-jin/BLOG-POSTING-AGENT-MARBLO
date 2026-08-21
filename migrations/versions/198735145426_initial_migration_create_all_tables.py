@@ -1,4 +1,4 @@
-﻿"""Initial migration: Create all tables
+"""Initial migration: Create all tables
 
 Revision ID: 198735145426
 Revises: 
@@ -11,7 +11,6 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-# revision identifiers, used by Alembic.
 revision: str = '198735145426'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
@@ -20,9 +19,11 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    # Create ENUM types
-    sa.Enum('blogger', 'family_member', 'admin', name='userrole').create(op.get_bind(), checkfirst=True)
-    sa.Enum('active', 'locked', 'suspended', 'deleted', name='accountstatus').create(op.get_bind(), checkfirst=True)
+    conn = op.get_bind()
+    
+    # Create ENUM types using PL/pgSQL
+    conn.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'userrole') THEN CREATE TYPE userrole AS ENUM ('blogger', 'family_member', 'admin'); END IF; END $$;"))
+    conn.execute(sa.text("DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'accountstatus') THEN CREATE TYPE accountstatus AS ENUM ('active', 'locked', 'suspended', 'deleted'); END IF; END $$;"))
     
     # Create users table
     op.create_table(
@@ -32,8 +33,8 @@ def upgrade() -> None:
         sa.Column('username', sa.VARCHAR(100), nullable=False),
         sa.Column('password_hash', sa.VARCHAR(255), nullable=False),
         sa.Column('name', sa.VARCHAR(255), nullable=False),
-        sa.Column('role', sa.Enum('blogger', 'family_member', 'admin', name='userrole'), nullable=False),
-        sa.Column('account_status', sa.Enum('active', 'locked', 'suspended', 'deleted', name='accountstatus'), nullable=False),
+        sa.Column('role', sa.Enum('blogger', 'family_member', 'admin', name='userrole', create_type=False), nullable=False),
+        sa.Column('account_status', sa.Enum('active', 'locked', 'suspended', 'deleted', name='accountstatus', create_type=False), nullable=False),
         sa.Column('failed_login_attempts', sa.Integer(), nullable=False),
         sa.Column('locked_until', sa.DateTime(), nullable=True),
         sa.Column('parent_blogger_id', postgresql.UUID(as_uuid=True), nullable=True),
@@ -45,8 +46,6 @@ def upgrade() -> None:
         sa.UniqueConstraint('email', name='uq_user_email'),
         sa.UniqueConstraint('username', name='uq_user_username'),
     )
-    
-    # Create indices for users table
     op.create_index('idx_user_email', 'users', ['email'])
     op.create_index('idx_user_username', 'users', ['username'])
     op.create_index('idx_user_role', 'users', ['role'])
@@ -73,8 +72,6 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('profile_id'),
         sa.UniqueConstraint('blogger_id', name='uq_profile_blogger_id'),
     )
-    
-    # Create indices for writing_style_profiles
     op.create_index('idx_blogger_id', 'writing_style_profiles', ['blogger_id'])
     op.create_index('idx_confidence_score', 'writing_style_profiles', ['confidence_score'])
     
@@ -96,8 +93,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['user_id'], ['users.user_id']),
         sa.PrimaryKeyConstraint('photo_id'),
     )
-    
-    # Create indices for photos
     op.create_index('idx_photo_user_id', 'photos', ['user_id'])
     op.create_index('idx_photo_upload_status', 'photos', ['upload_status'])
     op.create_index('idx_photo_analysis_status', 'photos', ['analysis_status'])
@@ -124,8 +119,6 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('metadata_id'),
         sa.UniqueConstraint('photo_id'),
     )
-    
-    # Create indices for photo_metadata
     op.create_index('idx_photo_metadata_photo_id', 'photo_metadata', ['photo_id'])
     op.create_index('idx_photo_metadata_category', 'photo_metadata', ['category'])
     op.create_index('idx_photo_metadata_user_verified', 'photo_metadata', ['user_verified'])
@@ -150,8 +143,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['user_id'], ['users.user_id']),
         sa.PrimaryKeyConstraint('post_id'),
     )
-    
-    # Create indices for blog_posts
     op.create_index('idx_blog_post_user_id', 'blog_posts', ['user_id'])
     op.create_index('idx_blog_post_status', 'blog_posts', ['status'])
     op.create_index('idx_blog_post_published_at', 'blog_posts', ['published_at'])
@@ -170,8 +161,6 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('post_photo_id'),
         sa.UniqueConstraint('post_id', 'photo_id', name='uq_post_photo_unique'),
     )
-    
-    # Create indices for blog_post_photos
     op.create_index('idx_blog_post_photo_post_id', 'blog_post_photos', ['post_id'])
     op.create_index('idx_blog_post_photo_photo_id', 'blog_post_photos', ['photo_id'])
     
@@ -199,8 +188,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['user_id'], ['users.user_id']),
         sa.PrimaryKeyConstraint('history_id'),
     )
-    
-    # Create indices for generation_history
     op.create_index('idx_generation_history_user_id', 'generation_history', ['user_id'])
     op.create_index('idx_generation_history_generation_date', 'generation_history', ['generation_date'])
     op.create_index('idx_generation_history_status', 'generation_history', ['status'])
@@ -220,8 +207,6 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('token_id'),
         sa.UniqueConstraint('token'),
     )
-    
-    # Create indices for password_reset_tokens
     op.create_index('idx_password_reset_token_user_id', 'password_reset_tokens', ['user_id'])
     op.create_index('idx_password_reset_token', 'password_reset_tokens', ['token'])
     op.create_index('idx_password_reset_token_expires_at', 'password_reset_tokens', ['expires_at'])
@@ -241,8 +226,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['user_id'], ['users.user_id']),
         sa.PrimaryKeyConstraint('edit_id'),
     )
-    
-    # Create indices for edit_history
     op.create_index('idx_edit_history_post_id', 'edit_history', ['post_id'])
     op.create_index('idx_edit_history_user_id', 'edit_history', ['user_id'])
     op.create_index('idx_edit_history_edit_timestamp', 'edit_history', ['edit_timestamp'])
@@ -263,8 +246,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['user_id'], ['users.user_id']),
         sa.PrimaryKeyConstraint('job_id'),
     )
-    
-    # Create indices for async_jobs
     op.create_index('idx_async_job_user_id', 'async_jobs', ['user_id'])
     op.create_index('idx_async_job_type', 'async_jobs', ['job_type'])
     op.create_index('idx_async_job_status', 'async_jobs', ['status'])
@@ -289,8 +270,6 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('invitation_id'),
         sa.UniqueConstraint('invitation_token'),
     )
-    
-    # Create indices for family_member_invitations
     op.create_index('idx_invitation_blogger_id', 'family_member_invitations', ['blogger_id'])
     op.create_index('idx_invitation_email', 'family_member_invitations', ['invited_email'])
     op.create_index('idx_invitation_token', 'family_member_invitations', ['invitation_token'])
@@ -300,7 +279,6 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     """Downgrade schema."""
-    # Drop all tables in reverse order of creation (respecting foreign keys)
     op.drop_table('family_member_invitations')
     op.drop_table('async_jobs')
     op.drop_table('edit_history')
@@ -312,10 +290,6 @@ def downgrade() -> None:
     op.drop_table('photos')
     op.drop_table('writing_style_profiles')
     op.drop_table('users')
-    
-    # Drop ENUM types
-    sa.Enum('blogger', 'family_member', 'admin', name='userrole').drop(op.get_bind(), checkfirst=True)
-    sa.Enum('active', 'locked', 'suspended', 'deleted', name='accountstatus').drop(op.get_bind(), checkfirst=True)
-
-
-
+    conn = op.get_bind()
+    conn.execute(sa.text('DROP TYPE IF EXISTS accountstatus CASCADE'))
+    conn.execute(sa.text('DROP TYPE IF EXISTS userrole CASCADE'))
