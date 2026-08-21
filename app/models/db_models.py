@@ -81,9 +81,9 @@ class User(Base):
     username = Column(VARCHAR(100), unique=True, nullable=False, index=True)
     password_hash = Column(VARCHAR(255), nullable=False)
     name = Column(VARCHAR(255), nullable=False)
-    role = Column(SQLEnum(UserRole), nullable=False, default=UserRole.BLOGGER, index=True)
+    role = Column(SQLEnum(UserRole, values_callable=lambda obj: [e.value for e in obj]), nullable=False, default=UserRole.BLOGGER, index=True)
     account_status = Column(
-        SQLEnum(AccountStatus),
+        SQLEnum(AccountStatus, values_callable=lambda obj: [e.value for e in obj]),
         nullable=False,
         default=AccountStatus.ACTIVE,
         index=True
@@ -516,6 +516,7 @@ class FamilyMemberInvitation(Base):
         Index("idx_invitation_status", "status"),
         Index("idx_invitation_expires_at", "expires_at"),
     )
+
 
 
 
