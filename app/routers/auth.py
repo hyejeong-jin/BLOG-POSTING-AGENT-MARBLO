@@ -328,7 +328,7 @@ async def login(
     # Password is valid - login success
     # Reset failed attempts and update last login time
     user.failed_login_attempts = 0
-    user.last_login_at = datetime.now(timezone.utc)
+    user.last_login_at = datetime.utcnow()
     await session.commit()
     
     logger.info("Login successful", user_id=str(user.user_id), email=user.email)
@@ -870,5 +870,6 @@ async def accept_family_invitation(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while accepting the invitation. Please try again.",
         )
+
 
 
