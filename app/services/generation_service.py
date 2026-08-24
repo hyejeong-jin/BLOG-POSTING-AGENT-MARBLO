@@ -179,7 +179,7 @@ class GenerationService:
                         "location": p.get("location"),
                         "price": p.get("price"),
                         "category": p.get("category"),
-                        "date": p.get("date"),
+                        "date": p.get("date").isoformat() if hasattr(p.get("date"), "isoformat") else p.get("date"),
                     }
                     for p in photos_data
                 ],
@@ -845,12 +845,13 @@ Notes:
             )
             
             # Create GenerationHistory entry for tracking
+            raw_photo_ids = generated_data.get("photo_ids") or []
             generation_history = GenerationHistory(
                 history_id=uuid4(),
                 user_id=user_id,
                 post_id=post_id,
                 generation_date=now,
-                source_photos=generated_data.get("photo_ids"),
+                source_photos=[str(pid) for pid in raw_photo_ids],
                 source_metadata=generated_data.get("metadata_snapshot", {}).get("metadata"),
                 generation_details=generated_data.get("generation_params"),
                 generated_title=generated_data["title"],
