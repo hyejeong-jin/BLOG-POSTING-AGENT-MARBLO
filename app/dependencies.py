@@ -285,3 +285,4 @@ def get_request_user(request: Request) -> Optional[User]:
     return getattr(request.state, "user", None)
 
 
+
