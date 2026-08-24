@@ -262,7 +262,7 @@ async def generate_post_mvp(
             title=saved_post["title"],
             content=saved_post["body"],
             word_count=word_count,
-            generated_at=saved_post["created_at"].isoformat(),
+            generated_at=saved_post["created_at"] if isinstance(saved_post["created_at"], str) else saved_post["created_at"].isoformat(),
         )
     
     except HTTPException:
