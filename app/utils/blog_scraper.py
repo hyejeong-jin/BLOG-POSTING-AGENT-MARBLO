@@ -80,7 +80,7 @@ class BlogScraper:
                 link_elem = item.find("link")
                 if link_elem is None or not link_elem.text:
                     continue
-                match = re.search(r"logNo=(\d+)", link_elem.text)
+                match = re.search(r"blog\.naver\.com/[^/]+/(\d+)", link_elem.text) or re.search(r"logNo=(\d+)", link_elem.text)
                 if match:
                     log_numbers.append(match.group(1))
                 if len(log_numbers) >= post_count:
@@ -126,11 +126,20 @@ class BlogScraper:
 
             soup = BeautifulSoup(response.text, "html.parser")
 
-            # Modern Naver blog "smart editor" content container
-            content_div = soup.select_one("div.se-main-container")
-            if content_div is None:
-                # Fallback for older editor posts
-                content_div = soup.select_one("div#postViewArea")
+            # Try known Naver blog content container selectors, from newest
+            # editor format to oldest, with a generic fallback last.
+            selectors = [
+                "div.se-main-container",
+                "div#postViewArea",
+                "div.post_ct",
+                "div#viewTypeSelector",
+                "article",
+            ]
+            content_div = None
+            for selector in selectors:
+                content_div = soup.select_one(selector)
+                if content_div is not None:
+                    break
 
             if content_div is None:
                 logger.warning(
