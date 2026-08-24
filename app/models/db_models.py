@@ -1,4 +1,4 @@
-﻿"""
+"""
 SQLAlchemy ORM models for Marblo database schema.
 
 This module defines all database models with proper relationships, indexes,

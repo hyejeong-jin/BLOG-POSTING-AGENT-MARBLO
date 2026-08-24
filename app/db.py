@@ -1,4 +1,4 @@
-﻿"""
+"""
 Database connection and session management for Marblo.
 
 This module sets up SQLAlchemy engine and session factory with async support

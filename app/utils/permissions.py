@@ -1,4 +1,4 @@
-﻿"""
+"""
 Permission checking utilities for role-based access control.
 
 Implements permission checks for multi-user support with:

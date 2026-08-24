@@ -1,4 +1,4 @@
-﻿"""
+"""
 Photo metadata extraction service.
 
 This module provides functionality for:

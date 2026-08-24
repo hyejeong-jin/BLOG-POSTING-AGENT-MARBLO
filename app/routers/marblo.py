@@ -1,4 +1,4 @@
-﻿"""
+"""
 Marblo MVP Endpoints - Fast blog learning and post generation workflow.
 
 This router implements the core MVP workflow:

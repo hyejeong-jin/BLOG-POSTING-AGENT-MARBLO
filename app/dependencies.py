@@ -1,4 +1,4 @@
-﻿"""
+"""
 Dependency injection and authentication middleware for FastAPI.
 
 This module provides:

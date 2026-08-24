@@ -1,4 +1,4 @@
-﻿"""
+"""
 Password reset service for managing password reset tokens and flow.
 
 This module handles generating, validating, and using password reset tokens.

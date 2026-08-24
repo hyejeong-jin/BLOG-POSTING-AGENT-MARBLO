@@ -1,4 +1,4 @@
-﻿"""
+"""
 Blog Post Management API endpoints.
 
 Endpoints for generating, managing, and publishing blog posts.

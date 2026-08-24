@@ -1,4 +1,4 @@
-﻿"""
+"""
 FastAPI application factory and middleware setup for Marblo.
 
 This module initializes the FastAPI application with all necessary

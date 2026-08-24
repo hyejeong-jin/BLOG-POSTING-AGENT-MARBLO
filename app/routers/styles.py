@@ -1,4 +1,4 @@
-﻿"""
+"""
 Writing Style Management API endpoints.
 
 Endpoints for uploading blog samples, learning writing styles, and managing style profiles.

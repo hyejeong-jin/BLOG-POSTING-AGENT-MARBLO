@@ -1,4 +1,4 @@
-﻿"""
+"""
 Generation History and Analytics Service.
 
 This service manages viewing and filtering generation history with advanced filtering,

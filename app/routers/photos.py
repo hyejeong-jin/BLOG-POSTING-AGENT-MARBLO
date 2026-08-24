@@ -1,4 +1,4 @@
-﻿"""
+"""
 Photo management router for uploading, analyzing, updating, and deleting photos.
 
 Implements:

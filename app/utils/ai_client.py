@@ -1,4 +1,4 @@
-﻿"""
+"""
 AI client for Claude integration via AWS Bedrock or direct API.
 
 This module provides functionality for:

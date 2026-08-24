@@ -648,7 +648,7 @@ Notes:
         
         lines.append("---")
         lines.append(
-            "\ud83d\udca1 TIP: AI \uae30\ubc18 \ubb38\uc7a5 \uc0dd\uc131\uc744 \uc0ac\uc6a9\ud558\ub824\ub09c CLAUDE_API_KEY\ub97c "
+            "TIP: AI \uae30\ubc18 \ubb38\uc7a5 \uc0dd\uc131\uc744 \uc0ac\uc6a9\ud558\ub824\ub09c CLAUDE_API_KEY\ub97c "
             "\ud658\uacbd\ub2e8\uacc4\uc5d0 \uc124\uc815\ud558\uc138\uc694."
         )
         

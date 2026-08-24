@@ -1,4 +1,4 @@
-﻿"""
+"""
 Background job workers for async task processing.
 
 This module contains worker functions for processing background jobs

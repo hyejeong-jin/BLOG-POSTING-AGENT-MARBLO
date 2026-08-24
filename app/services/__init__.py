@@ -1,4 +1,4 @@
-﻿"""
+"""
 Service layer for Marblo business logic.
 
 This module exports all service classes used throughout the application.

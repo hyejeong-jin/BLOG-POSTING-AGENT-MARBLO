@@ -1,4 +1,4 @@
-﻿"""
+"""
 Writing Style Learning and Profile Management Service.
 
 This service handles learning and managing blogger writing styles from uploaded posts.

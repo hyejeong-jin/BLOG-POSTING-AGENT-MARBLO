@@ -1,4 +1,4 @@
-﻿"""
+"""
 Blog Post Export and Publishing Service.
 
 This service handles exporting posts to various formats and publishing to external platforms.

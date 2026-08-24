@@ -1,4 +1,4 @@
-﻿"""
+"""
 Generation History API endpoints.
 
 Endpoints for viewing and managing generation history.
