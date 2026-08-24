@@ -617,39 +617,39 @@ Notes:
         Returns:
             Tuple of (title, body)
         """
-        topic_label = category or "\uc0ac\uc9c4 \uc774\uc57c\uae30"
-        title = f"[\ucd08\uc548] {topic_label} - \uc9c1\uc811 \uc791\uc131\ud574\uc8fc\uc138\uc694"
+        topic_label = category or "사진 이야기"
+        title = f"[초안] {topic_label} - 직접 작성해주세요"
         
         lines = []
         lines.append(f"# {topic_label}")
         lines.append("")
         lines.append(
-            "\uc774 \uae30\uc0ac\ub294 AI\uac00 \uc790\ub3d9 \uc0dd\uc131\ud55c \uac83\uc774 \uc544\ub2c8\ub85c, "
-            "\uc5c5\ub9bd\ub41c \uc0ac\uc9c4 \uc815\ubcf4\ub9cc\uc73c\ub85c \uc791\uc131\ub41c \ucd08\uc548\uc785\ub2c8\ub2e4. "
-            "\ub0b4\uc6a9\uc744 \ud655\uc778\ud558\uc5ec \uc9c1\uc811 \uc218\uc815\ud574\uc8fc\uc138\uc694."
+            "이 글은 AI가 자동으로 생성한 것이 아니라, "
+            "업로드된 사진 정보를 바탕으로 작성된 초안입니다. "
+            "내용을 확인하고 직접 다듬어 주세요."
         )
         lines.append("")
         
         for idx, photo in enumerate(photos_data, 1):
-            lines.append(f"## \uc0ac\uc9c4 {idx}")
+            lines.append(f"## 사진 {idx}")
             if photo.get("description"):
-                lines.append(f"- \uc124\ubb85: {photo['description']}")
+                lines.append(f"- 설명: {photo['description']}")
             if photo.get("location"):
-                lines.append(f"- \uc704\uc5b4\uc790: {photo['location']}")
+                lines.append(f"- 위치: {photo['location']}")
             if photo.get("price"):
-                lines.append(f"- \uac00\uad34/\uc815\ubbf8: {photo['price']}")
+                lines.append(f"- 가격/정보: {photo['price']}")
             if photo.get("category"):
-                lines.append(f"- \ucd94\ucc9c \ube94\ub78d\uba85: {photo['category']}")
+                lines.append(f"- 추천 분류: {photo['category']}")
             if photo.get("date"):
-                lines.append(f"- \ub0a0\uc9c1/\uc2a4\uc11c: {photo['date']}")
+                lines.append(f"- 날짜/시각: {photo['date']}")
             if not any(photo.get(k) for k in ("description", "location", "price", "category", "date")):
-                lines.append("- (\uc0ac\uc9c4 \ubb1c\uc6b5\uc111 \ub370\uc774\ud0c0\uac00 \uc5c6\uc2b5\ub2c8\ub2e4. \uc9c1\uc811 \ub0b4\uc6a9\uc744 \ucd94\uac00\ud574\uc8fc\uc138\uc694.)")
+                lines.append("- (사진 분석 데이터가 없습니다. 직접 내용을 추가해주세요.)")
             lines.append("")
         
         lines.append("---")
         lines.append(
-            "TIP: AI \uae30\ubc18 \ubb38\uc7a5 \uc0dd\uc131\uc744 \uc0ac\uc6a9\ud558\ub824\ub09c CLAUDE_API_KEY\ub97c "
-            "\ud658\uacbd\ub2e8\uacc4\uc5d0 \uc124\uc815\ud558\uc138\uc694."
+            "TIP: AI 기반 문장 생성을 사용하려면 CLAUDE_API_KEY를 "
+            "환경 변수에 설정하세요."
         )
         
         body = "\n".join(lines)
