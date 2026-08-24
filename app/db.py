@@ -26,7 +26,7 @@ engine = create_async_engine(
     pool_size=settings.database_pool_size,
     max_overflow=settings.database_max_overflow,
     pool_recycle=settings.database_pool_recycle,
-    pool_pre_ping=True,  # Test connections before using
+    pool_pre_ping=False,  # Disabled for asyncpg compatibility
     connect_args={
         "timeout": 10,
         "command_timeout": 60,
@@ -96,5 +96,6 @@ def get_session_for_background_task():
 
 # Alias for dependency injection
 get_db = get_db_session
+
 
 
