@@ -595,7 +595,8 @@
             const selectedDiv = document.getElementById('selectedPhotos');
             
             if (input.files.length > 0) {
-                selectedDiv.innerHTML = `<p style="color: #10b981;">✓ ${input.files.length}개의 사진 선택됨</p>`;
+                let fileList = Array.from(input.files).map(f => `<li>${f.name} (${(f.size/1024).toFixed(1)}KB)</li>`).join('');
+                selectedDiv.innerHTML = `<p style="color: #10b981; font-weight: 600;">✓ ${input.files.length}개의 사진 선택됨</p><ul style="color: #666; font-size: 0.85em; margin-top: 8px; padding-left: 20px;">${fileList}</ul>`;
                 document.querySelector('.file-input-label').classList.add('active');
             }
         }

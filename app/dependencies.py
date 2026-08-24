@@ -158,6 +158,10 @@ async def get_current_user(
     logger.debug("User authenticated successfully", user_id=str(user.user_id))
     
     # Store user in request state for later access
+    # Detach user from session to prevent async lazy loading errors
+    await db.refresh(user)
+    db.expunge(user)
+    
     request.state.user = user
     
     return user
@@ -283,6 +287,7 @@ def get_request_user(request: Request) -> Optional[User]:
         ```
     """
     return getattr(request.state, "user", None)
+
 
 
 
