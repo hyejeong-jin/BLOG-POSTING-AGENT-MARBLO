@@ -1,4 +1,4 @@
-﻿"""
+"""
 Blog Post Generation Service.
 
 This service handles generating blog posts based on photos, metadata, and writing style.
@@ -139,13 +139,17 @@ class GenerationService:
                 prompt_length=len(generation_prompt),
             )
             
-            # Step 5: Call Claude API
+            # Step 5: Call Claude API (fallback to template if not configured)
             generated_content = await self._call_claude_for_generation(generation_prompt)
             if not generated_content:
-                raise RuntimeError("Failed to generate content from Claude API")
-            
-            # Step 6: Parse generated title and body
-            title, body = self._parse_generated_content(generated_content)
+                logger.warning(
+                    "Claude API unavailable, using template-based draft generation",
+                    user_id=str(user_id),
+                )
+                title, body = self._generate_template_draft(photos_data, kwargs.get("category"))
+            else:
+                # Step 6: Parse generated title and body
+                title, body = self._parse_generated_content(generated_content)
             
             # Validate lengths
             if len(body) < min_length:
@@ -594,6 +598,62 @@ Notes:
             instructions.append("Use professional, informative tone with clear structure")
         
         return "\n".join(f"??{inst}" for inst in instructions)
+    
+    def _generate_template_draft(
+        self,
+        photos_data: List[dict],
+        category: Optional[str] = None,
+    ) -> tuple[str, str]:
+        """
+        Generate a simple template-based draft when Claude API is not configured.
+        
+        This produces a basic structured draft using photo metadata directly,
+        intended for the user to copy and manually refine before publishing.
+        
+        Args:
+            photos_data: List of photo metadata dictionaries
+            category: Optional category label
+            
+        Returns:
+            Tuple of (title, body)
+        """
+        topic_label = category or "\uc0ac\uc9c4 \uc774\uc57c\uae30"
+        title = f"[\ucd08\uc548] {topic_label} - \uc9c1\uc811 \uc791\uc131\ud574\uc8fc\uc138\uc694"
+        
+        lines = []
+        lines.append(f"# {topic_label}")
+        lines.append("")
+        lines.append(
+            "\uc774 \uae30\uc0ac\ub294 AI\uac00 \uc790\ub3d9 \uc0dd\uc131\ud55c \uac83\uc774 \uc544\ub2c8\ub85c, "
+            "\uc5c5\ub9bd\ub41c \uc0ac\uc9c4 \uc815\ubcf4\ub9cc\uc73c\ub85c \uc791\uc131\ub41c \ucd08\uc548\uc785\ub2c8\ub2e4. "
+            "\ub0b4\uc6a9\uc744 \ud655\uc778\ud558\uc5ec \uc9c1\uc811 \uc218\uc815\ud574\uc8fc\uc138\uc694."
+        )
+        lines.append("")
+        
+        for idx, photo in enumerate(photos_data, 1):
+            lines.append(f"## \uc0ac\uc9c4 {idx}")
+            if photo.get("description"):
+                lines.append(f"- \uc124\ubb85: {photo['description']}")
+            if photo.get("location"):
+                lines.append(f"- \uc704\uc5b4\uc790: {photo['location']}")
+            if photo.get("price"):
+                lines.append(f"- \uac00\uad34/\uc815\ubbf8: {photo['price']}")
+            if photo.get("category"):
+                lines.append(f"- \ucd94\ucc9c \ube94\ub78d\uba85: {photo['category']}")
+            if photo.get("date"):
+                lines.append(f"- \ub0a0\uc9c1/\uc2a4\uc11c: {photo['date']}")
+            if not any(photo.get(k) for k in ("description", "location", "price", "category", "date")):
+                lines.append("- (\uc0ac\uc9c4 \ubb1c\uc6b5\uc111 \ub370\uc774\ud0c0\uac00 \uc5c6\uc2b5\ub2c8\ub2e4. \uc9c1\uc811 \ub0b4\uc6a9\uc744 \ucd94\uac00\ud574\uc8fc\uc138\uc694.)")
+            lines.append("")
+        
+        lines.append("---")
+        lines.append(
+            "\ud83d\udca1 TIP: AI \uae30\ubc18 \ubb38\uc7a5 \uc0dd\uc131\uc744 \uc0ac\uc6a9\ud558\ub824\ub09c CLAUDE_API_KEY\ub97c "
+            "\ud658\uacbd\ub2e8\uacc4\uc5d0 \uc124\uc815\ud558\uc138\uc694."
+        )
+        
+        body = "\n".join(lines)
+        return title, body
     
     async def _call_claude_for_generation(self, prompt: str) -> Optional[str]:
         """
