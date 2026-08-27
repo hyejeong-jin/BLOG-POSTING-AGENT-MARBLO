@@ -42,6 +42,15 @@ wheels/
 *.tfvars
 !terraform/terraform.tfvars.example
 
+# AWS Credentials (CRITICAL - NEVER COMMIT)
+*accessKeys*.csv
+*credentials*.csv
+*.pem
+*.key
+~/.aws/
+.aws/
+AWS_*.txt
+
 # Deployments
 marblo-deploy.zip
 marblo-deploy-key.pem
