@@ -1,4 +1,4 @@
-﻿[build-system]
+[build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
@@ -62,7 +62,8 @@ dependencies = [
     # Utilities
     "pytz==2023.3",
     "python-dateutil==2.8.2",
-    "Pillow==10.1.0",  # Image processing\n    "beautifulsoup4==4.12.2",  # HTML parsing for blog scraping
+    "Pillow==10.1.0",  # Image processing
+    "beautifulsoup4==4.12.2",  # HTML parsing for blog scraping
 ]
 
 [project.optional-dependencies]

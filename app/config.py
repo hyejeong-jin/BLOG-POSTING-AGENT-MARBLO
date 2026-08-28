@@ -78,6 +78,12 @@ class Settings(BaseSettings):
     claude_model: str = os.getenv("CLAUDE_MODEL", "claude-3-sonnet-20240229")
     openai_api_key: Optional[str] = os.getenv("OPENAI_API_KEY")
     
+    # AI Services (Bedrock)
+    use_bedrock: bool = os.getenv("USE_BEDROCK", "true").lower() == "true"
+    bedrock_model_id: str = os.getenv("BEDROCK_MODEL_ID", "amazon.nova-lite-v1:0")
+    bedrock_max_tokens: int = int(os.getenv("BEDROCK_MAX_TOKENS", "2048"))
+    bedrock_region: str = os.getenv("BEDROCK_REGION", os.getenv("AWS_REGION", "us-east-1"))
+    
     # Email Service
     email_provider: str = os.getenv("EMAIL_PROVIDER", "ses")  # ses or sendgrid
     sendgrid_api_key: Optional[str] = os.getenv("SENDGRID_API_KEY")
@@ -127,6 +133,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = False
+        extra = "ignore"  # Ignore extra env vars not defined in Settings
 
 
 # Global settings instance

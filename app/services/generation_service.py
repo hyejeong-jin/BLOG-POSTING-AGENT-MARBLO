@@ -1,4 +1,4 @@
-"""
+﻿"""
 Blog Post Generation Service.
 
 This service handles generating blog posts based on photos, metadata, and writing style.
@@ -51,6 +51,7 @@ class GenerationService:
         photo_ids: List[UUID],
         style_profile_id: Optional[UUID] = None,
         min_length: int = DEFAULT_MIN_LENGTH,
+        posting_intent: Optional[Dict] = None,
         max_length: int = DEFAULT_MAX_LENGTH,
         **kwargs
     ) -> dict:

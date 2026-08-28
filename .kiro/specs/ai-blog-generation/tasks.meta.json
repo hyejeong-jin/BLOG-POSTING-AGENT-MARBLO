@@ -1,0 +1,310 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 `Settings` 클래스에 Bedrock 관련 필드 추가": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893056573
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893070851
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893157817
+      }
+    ],
+    "2.1 `S3Client.get_object_bytes(s3_key: str) -> Optional[bytes]` 메서드 구현": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057276
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893166066
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893316169
+      }
+    ],
+    "3.1 `_get_bedrock_client()` 메서드 구현": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057355
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893166819
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893316803
+      }
+    ],
+    "3.2 `_invoke_converse(messages, system_prompt) -> Optional[str]` 구현": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057422
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893322333
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893489438
+      }
+    ],
+    "3.3 `_extract_text(converse_response) -> str` 헬퍼 구현": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057483
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893323157
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893490309
+      }
+    ],
+    "4.1 `analyze_photo(image_bytes: bytes, image_format: str, photo_title: Optional[str]) -> Optional[dict]` 시그니처로 변경": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057551
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893495724
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893656355
+      }
+    ],
+    "4.2 기존 `_call_claude` 기반 호출을 `_invoke_converse` 기반으로 전환": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057618
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893692156
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893854324
+      }
+    ],
+    "5. Checkpoint — config 및 AIClient 단위 테스트 확인": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057703
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893870164
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787894429958
+      }
+    ],
+    "6.1 `analyze_photo_record(photo, db, s3_client, ai_client) -> bool` 내부 함수 도입": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057754
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787894437322
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787894835907
+      }
+    ],
+    "6.2 기존 `analyze_photo` 엔드포인트가 `analyze_photo_record` 호출하도록 리팩터링": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057800
+      },
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787894849423
+      }
+    ],
+    "7.1 `generate_post_mvp` 함수에서 `posting_intent` 구성": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057852
+      }
+    ],
+    "7.2 요청된 사진 중 `analysis_status=\"pending\"`인 것 동기 분석": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893057956
+      }
+    ],
+    "7.3 모든 사진 분석 실패 시 오류 반환 (템플릿 미반환)": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058024
+      }
+    ],
+    "7.4 `gen_service.generate_post(...)` 호출 시 `posting_intent` 전달": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058076
+      }
+    ],
+    "7.5 생성 예외(`RuntimeError`/`ValueError`) → HTTP 5xx 변환 + 로그": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058127
+      }
+    ],
+    "8. Checkpoint — photos.py, marblo.py 단위 테스트 확인": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058189
+      }
+    ],
+    "9.1 `generate_blog_post`, `generate_post` 시그니처에 `posting_intent: Optional[dict] = None` 추가": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058264
+      }
+    ],
+    "9.2 `_create_generation_prompt`에서 `posting_intent` 프롬프트 반영": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058308
+      }
+    ],
+    "9.3 템플릿 폴백 제거": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058347
+      }
+    ],
+    "9.4 파싱 실패(`ValueError`) 그대로 전파": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058394
+      }
+    ],
+    "9.5 다중 사진 메타데이터 컨텍스트 포함 검증": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058445
+      }
+    ],
+    "10. Checkpoint — GenerationService 단위 테스트 확인": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058524
+      }
+    ],
+    "12.1 로컬 통합 테스트 실행": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058585
+      }
+    ],
+    "12.2 EC2 배포 및 E2E 스모크 테스트": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058648
+      }
+    ],
+    "12.3 systemd 서비스 등록 권장 사항 확인 (선택)": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058712
+      }
+    ],
+    "13. Final Checkpoint — 전체 테스트 통과 확인": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893058778
+      }
+    ],
+    "1. Bedrock 설정 추가 (`app/config.py`)": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893157946
+      }
+    ],
+    "2. S3 바이트 조회 헬퍼 추가 (`app/utils/s3_client.py`)": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893316227
+      }
+    ],
+    "3. AIClient Bedrock Converse 경로 구현 (`app/utils/ai_client.py`)": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893490349
+      }
+    ],
+    "4. AIClient `analyze_photo` 시그니처 변경": [
+      {
+        "executionId": "31802ca1-0dd5-4b96-abc5-57677ae85b61",
+        "chatSessionId": "sess_8c1059c4-3b93-4158-95c0-6c97888576af",
+        "timestamp": 1787893854387
+      }
+    ]
+  }
+}

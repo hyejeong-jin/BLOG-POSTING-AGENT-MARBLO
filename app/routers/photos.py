@@ -1,4 +1,4 @@
-"""
+﻿"""
 Photo management router for uploading, analyzing, updating, and deleting photos.
 
 Implements:
@@ -90,6 +90,188 @@ async def _validate_image_file(file: UploadFile) -> tuple[bool, Optional[str]]:
     except Exception as e:
         logger.warning("Image validation failed", error=str(e))
         return False, "Invalid image file or corrupted file"
+
+
+async def analyze_photo_record(
+    photo: Photo,
+    db: AsyncSession,
+    s3_client,
+    ai_client,
+) -> bool:
+    """
+    Analyze a photo record and extract/store metadata.
+    
+    This function is reusable and can be called from:
+    - /photos/{photo_id}/analyze endpoint
+    - Marblo pipeline (/marblo/generate endpoint)
+    
+    **Requirements (3.2, 3.3, 3.4, 3.5):**
+    - Update analysis status to "analyzing"
+    - Retrieve image bytes from S3
+    - Call AI client to analyze photo
+    - Map analysis results to PhotoMetadata fields
+    - Store None for unconfirmed fields (partial success)
+    - Upsert PhotoMetadata record
+    - Update analysis status to "completed" on success, "failed" on failure
+    
+    Args:
+        photo: Photo database record to analyze
+        db: Database session
+        s3_client: S3 client instance for retrieving image bytes
+        ai_client: AI client instance for photo analysis
+        
+    Returns:
+        True if analysis succeeded, False otherwise
+    """
+    logger.info(
+        "Starting photo analysis",
+        photo_id=str(photo.photo_id),
+        s3_key=photo.s3_key,
+    )
+    
+    try:
+        # Step 1: Update status to "analyzing"
+        photo.analysis_status = "analyzing"
+        await db.commit()
+        
+        # Step 2: Get image bytes from S3
+        image_bytes = await s3_client.get_object_bytes(photo.s3_key)
+        
+        if image_bytes is None:
+            logger.error(
+                "Failed to retrieve image bytes from S3",
+                photo_id=str(photo.photo_id),
+                s3_key=photo.s3_key,
+            )
+            photo.analysis_status = "failed"
+            await db.commit()
+            return False
+        
+        logger.info(
+            "Image bytes retrieved from S3",
+            photo_id=str(photo.photo_id),
+            size_bytes=len(image_bytes),
+        )
+        
+        # Step 3: Call AI client to analyze photo (new signature)
+        analysis_result = await ai_client.analyze_photo(
+            image_bytes=image_bytes,
+            image_format=photo.file_format,
+            photo_title=photo.file_name,
+        )
+        
+        if analysis_result is None:
+            logger.error(
+                "AI photo analysis returned None",
+                photo_id=str(photo.photo_id),
+            )
+            photo.analysis_status = "failed"
+            await db.commit()
+            return False
+        
+        logger.info(
+            "AI photo analysis completed",
+            photo_id=str(photo.photo_id),
+            has_description="description" in analysis_result,
+            has_location="location" in analysis_result,
+            category=analysis_result.get("category"),
+        )
+        
+        # Step 4: Map analysis result to PhotoMetadata fields
+        # Extract fields from analysis_result dict
+        description = analysis_result.get("description")
+        location = analysis_result.get("location")  # str or null
+        date_info = analysis_result.get("date")  # str or null
+        category = analysis_result.get("category")  # food, travel, daily, nature, people, other
+        objects_list = analysis_result.get("objects", [])  # list[str]
+        mood = analysis_result.get("mood")  # str
+        
+        # Map to PhotoMetadata schema
+        location_information = None
+        if location:
+            location_information = {"visible_location": location}
+        
+        # Build additional_metadata for objects and mood
+        additional_metadata = None
+        if objects_list or mood:
+            additional_metadata = {}
+            if objects_list:
+                additional_metadata["objects"] = objects_list
+            if mood:
+                additional_metadata["mood"] = mood
+        
+        # Generate confidence scores (dummy values for now as per task notes)
+        confidence_scores = {
+            "description": 0.9 if description else 0.0,
+            "location": 0.7 if location else 0.0,
+            "category": 0.8 if category else 0.0,
+        }
+        
+        # Step 5: Check if PhotoMetadata record already exists (for upsert)
+        stmt = select(PhotoMetadata).where(PhotoMetadata.photo_id == photo.photo_id)
+        result = await db.execute(stmt)
+        existing_metadata = result.scalar_one_or_none()
+        
+        if existing_metadata:
+            # Update existing record (upsert)
+            logger.info(
+                "Updating existing PhotoMetadata record",
+                photo_id=str(photo.photo_id),
+                metadata_id=str(existing_metadata.metadata_id),
+            )
+            existing_metadata.photo_description = description
+            existing_metadata.location_information = location_information
+            existing_metadata.category = category
+            existing_metadata.additional_metadata = additional_metadata
+            existing_metadata.confidence_scores = confidence_scores
+            # price_information and date_and_time remain unchanged (not extracted in current prompt)
+            # Don't override user_verified flag if already set
+        else:
+            # Create new PhotoMetadata record
+            logger.info(
+                "Creating new PhotoMetadata record",
+                photo_id=str(photo.photo_id),
+            )
+            new_metadata = PhotoMetadata(
+                photo_id=photo.photo_id,
+                photo_description=description,
+                location_information=location_information,
+                price_information=None,  # Not extracted in current AI prompt
+                date_and_time=None,  # Not extracted in current AI prompt
+                category=category,
+                additional_metadata=additional_metadata,
+                confidence_scores=confidence_scores,
+                user_verified=False,
+            )
+            db.add(new_metadata)
+        
+        # Step 6: Update photo analysis status to "completed"
+        photo.analysis_status = "completed"
+        await db.commit()
+        
+        logger.info(
+            "Photo analysis completed successfully",
+            photo_id=str(photo.photo_id),
+            category=category,
+            has_location=location is not None,
+        )
+        
+        return True
+        
+    except Exception as e:
+        logger.error(
+            "Error during photo analysis",
+            photo_id=str(photo.photo_id),
+            error=str(e),
+            error_type=type(e).__name__,
+        )
+        # Ensure status is set to failed
+        try:
+            photo.analysis_status = "failed"
+            await db.commit()
+        except Exception:
+            await db.rollback()
+        return False
 
 
 @router.post(
@@ -332,76 +514,21 @@ async def analyze_photo(
                 detail="You can only analyze your own photos",
             )
         
-        # Update status to analyzing
-        photo.analysis_status = "analyzing"
-        await db.commit()
-        
-        # Call AI to analyze photo
+        # Use reusable analyze_photo_record function
+        s3_client = get_s3_client()
         ai_client = get_ai_client()
-        analysis_result = await ai_client.analyze_photo(image_url=photo.s3_url)
         
-        if not analysis_result:
-            logger.error(
-                "Photo analysis failed",
-                user_id=str(user.user_id),
-                photo_id=photo_id,
-            )
-            photo.analysis_status = "failed"
-            await db.commit()
+        success = await analyze_photo_record(photo, db, s3_client, ai_client)
+        
+        if not success:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Failed to analyze photo",
             )
         
-        # Parse analysis result
-        description = analysis_result.get("description")
-        location_data = analysis_result.get("location", {})
-        price_data = analysis_result.get("price", {})
-        date_data = analysis_result.get("date_time", {})
-        category = analysis_result.get("category")
-        confidence_scores = analysis_result.get("confidence_scores", {})
-        
-        # Create PhotoMetadata record
-        metadata = PhotoMetadata(
-            photo_id=photo_uuid,
-            photo_description=description,
-            location_information=(
-                LocationInformation(
-                    visible_location=location_data.get("visible_location"),
-                    location_type=location_data.get("location_type"),
-                ).model_dump(exclude_none=True)
-                if location_data
-                else None
-            ),
-            price_information=(
-                PriceInformation(
-                    currency=price_data.get("currency"),
-                    amount=price_data.get("amount"),
-                ).model_dump(exclude_none=True)
-                if price_data and price_data.get("price_visible")
-                else None
-            ),
-            date_and_time=None,  # Parse from date_data if provided
-            category=category,
-            confidence_scores=confidence_scores,
-            user_verified=False,
-        )
-        
-        db.add(metadata)
-        
-        # Update photo analysis status
-        photo.analysis_status = "completed"
-        await db.commit()
-        
-        logger.info(
-            "Photo analysis completed",
-            user_id=str(user.user_id),
-            photo_id=photo_id,
-        )
-        
         return {
-            "status": "analyzing",
-            "message": "Photo analysis started",
+            "status": "completed",
+            "message": "Photo analysis completed",
             "photo_id": photo_id,
         }
     

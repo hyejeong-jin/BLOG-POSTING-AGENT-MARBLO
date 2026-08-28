@@ -269,6 +269,76 @@ class S3Client:
             logger.error("Error generating presigned URL", s3_key=s3_key, error=str(e))
             return None
     
+    async def get_object_bytes(self, s3_key: str) -> Optional[bytes]:
+        """
+        Get S3 object contents as bytes in memory.
+        
+        Args:
+            s3_key: S3 object key
+            
+        Returns:
+            Object bytes if successful, None otherwise
+        """
+        for attempt in range(self.MAX_RETRIES):
+            try:
+                logger.info(
+                    "Getting object bytes from S3",
+                    s3_key=s3_key,
+                    attempt=attempt + 1,
+                    max_retries=self.MAX_RETRIES,
+                )
+                
+                response = self.s3_client.get_object(
+                    Bucket=self.bucket_name,
+                    Key=s3_key,
+                )
+                
+                data = response["Body"].read()
+                
+                logger.info(
+                    "Object bytes retrieved successfully",
+                    s3_key=s3_key,
+                    size_bytes=len(data),
+                )
+                
+                return data
+            
+            except (ClientError, BotoCoreError) as e:
+                error_code = getattr(e.response["Error"], "Code", str(e)) if hasattr(e, "response") else str(e)
+                
+                logger.warning(
+                    "S3 get_object failed",
+                    s3_key=s3_key,
+                    attempt=attempt + 1,
+                    error=error_code,
+                )
+                
+                if attempt < self.MAX_RETRIES - 1:
+                    backoff_seconds = self.INITIAL_BACKOFF_SECONDS * (2 ** attempt)
+                    logger.info(
+                        "Retrying S3 get_object",
+                        s3_key=s3_key,
+                        backoff_seconds=backoff_seconds,
+                    )
+                    await asyncio.sleep(backoff_seconds)
+                else:
+                    logger.error(
+                        "S3 get_object failed after retries",
+                        s3_key=s3_key,
+                        total_attempts=self.MAX_RETRIES,
+                    )
+                    return None
+            
+            except Exception as e:
+                logger.error(
+                    "Unexpected error during S3 get_object",
+                    s3_key=s3_key,
+                    error=str(e),
+                )
+                return None
+        
+        return None
+    
     async def list_objects(
         self,
         prefix: str = "",

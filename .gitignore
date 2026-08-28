@@ -70,3 +70,8 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+# Local AWS/SSM helper scripts and temp files (NEVER COMMIT)
+_ssm_run.py
+_*.txt
+_*.py
