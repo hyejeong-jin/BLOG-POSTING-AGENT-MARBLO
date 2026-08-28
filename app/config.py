@@ -80,7 +80,7 @@ class Settings(BaseSettings):
     
     # AI Services (Bedrock)
     use_bedrock: bool = os.getenv("USE_BEDROCK", "true").lower() == "true"
-    bedrock_model_id: str = os.getenv("BEDROCK_MODEL_ID", "amazon.nova-lite-v1:0")
+    bedrock_model_id: str = os.getenv("BEDROCK_MODEL_ID", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
     bedrock_max_tokens: int = int(os.getenv("BEDROCK_MAX_TOKENS", "2048"))
     bedrock_region: str = os.getenv("BEDROCK_REGION", os.getenv("AWS_REGION", "us-east-1"))
     

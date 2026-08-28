@@ -1,4 +1,4 @@
-﻿"""
+"""
 AI client for Claude integration via AWS Bedrock or direct API.
 
 This module provides functionality for:
@@ -294,20 +294,22 @@ class AIClient:
         converse_format = format_mapping.get(normalized_format, "jpeg")
         
         # System prompt with analysis instructions (Korean)
-        system_prompt = """?ъ쭊??遺꾩꽍?섏뿬 ?ㅼ쓬 ?뺣낫瑜?JSON ?뺤떇?쇰줈 異붿텧?섏꽭??
-- description: ?ъ쭊??????먯꽭???ㅻ챸 (2-3臾몄옣)
-- location: ?ъ쭊??珥ъ쁺???μ냼 (?????놁쑝硫?null)
-- date: ?ъ쭊 珥ъ쁺 異붿젙 ?쒓린 (?????놁쑝硫?null)
-- category: ?ъ쭊 移댄뀒怨좊━ (food, travel, daily, nature, people, other 以??섎굹)
-- objects: ?ъ쭊?먯꽌 ?앸퀎??二쇱슂 媛앹껜 紐⑸줉
-- mood: ?ъ쭊??遺꾩쐞湲?(諛앹?, ?대몢?? ?곕쑜?? 李④?????
+        system_prompt = """사진을 분석하여 다음 정보를 JSON 형식으로 추출하세요:
+- description: 사진에 대한 자세한 설명 (2-3문장)
+- location: 사진이 촬영된 장소 (알 수 없으면 null)
+- date: 사진 촬영 추정 시기 (알 수 없으면 null)
+- category: 사진 카테고리 (food, travel, daily, nature, people, screenshot, other 중 하나)
+- objects: 사진에서 식별된 주요 객체 목록
+- mood: 사진의 분위기 (밝은, 어두운, 따뜻한, 차가운 등)
 
-JSON留?諛섑솚?섍퀬 ?ㅻⅨ ?띿뒪?몃뒗 ?ы븿?섏? 留덉꽭??"""
+중요: 사진에 실제로 보이는 내용만 설명하세요. 보이지 않는 정보는 절대 지어내지 마세요. 사진이 웹사이트나 앱의 화면 캡처라면, 실제 화면(어떤 기능/화면/데이터인지)을 설명하고 자연 풍경이나 여행 사진처럼 묘사하지 마세요. 알 수 없는 정보는 null로 두세요.
+
+JSON만 반환하고 다른 텍스트는 포함하지 마세요."""
         
         # User message with image and request text
-        user_text = "???ъ쭊??遺꾩꽍?섍퀬 JSON?쇰줈 ?묐떟?댁＜?몄슂."
+        user_text = "이 사진을 분석하고 JSON으로 응답해주세요."
         if photo_title:
-            user_text += f"\n\n?ъ쭊 ?쒕ぉ: {photo_title}"
+            user_text += f"\n\n사진 제목: {photo_title}"
         
         # Build Converse API messages with image block
         messages = [{
@@ -377,33 +379,34 @@ JSON留?諛섑솚?섍퀬 ?ㅻⅨ ?띿뒪?몃뒗 ?ы븿?섏? 留덉꽭??"""
             Dict with 'title' and 'body' if successful, None otherwise
         """
         metadata_str = json.dumps(photo_metadata, indent=2, ensure_ascii=False)
-        style_str = json.dumps(writing_style, indent=2, ensure_ascii=False) if writing_style else "吏?뺣맂 ?ㅽ????놁쓬"
+        style_str = json.dumps(writing_style, indent=2, ensure_ascii=False) if writing_style else "지정된 스타일 없음"
         
         # System prompt for blog generation (Korean)
-        system_prompt = """?뱀떊? ?꾨Ц ?쒓뎅??釉붾줈洹??묒꽦?먯엯?덈떎. 
-?ъ쭊 硫뷀??곗씠?곗? ?묒꽦 ?ㅽ??쇱쓣 湲곕컲?쇰줈 ?먯뿰?ㅻ읇怨?留ㅻ젰?곸씤 ?쒓뎅??釉붾줈洹?湲???묒꽦?⑸땲??
+        system_prompt = """당신은 전문 한국어 블로그 작성자입니다.
+사진 메타데이터와 작성 스타일을 기반으로 자연스럽고 매력적인 한국어 블로그 글을 작성합니다.
 
-?묐떟 ?뺤떇:
-諛섎뱶???ㅼ쓬 JSON ?뺤떇?쇰줈留??묐떟?섏꽭??
-{"title": "釉붾줈洹??쒕ぉ", "body": "蹂몃Ц ?댁슜"}
+응답 형식:
+반드시 다음 JSON 형식으로만 응답하세요:
+{"title": "블로그 제목", "body": "본문 내용"}
 
-洹쒖튃:
-- ?먯뿰?ㅻ윭???쒓뎅?대줈 ?묒꽦
-- 3-5媛쒖쓽 臾몃떒 ?ы븿
-- ?ъ쭊 硫뷀??곗씠?곗쓽 愿???뺣낫 諛섏쁺
-- ?낆옄?먭쾶 ?좎슜?섍퀬 ?λ?濡쒖슫 ?댁슜 ?묒꽦"""
+규칙:
+- 자연스러운 한국어로 작성
+- 3-5개의 문단 포함
+- 사진 메타데이터에 실제로 있는 정보만 반영하고, 없는 정보는 지어내지 마세요
+- 독자에게 유용하고 흥미로운 내용 작성
+- 사진 메타데이터에 S3 URL이 있으면 본문 중간에 마크다운 이미지 문법 ![설명](URL)으로 삽입하세요"""
         
-        user_prompt = f"""?ㅼ쓬 ?뺣낫瑜?湲곕컲?쇰줈 釉붾줈洹?湲???묒꽦?댁＜?몄슂.
+        user_prompt = f"""다음 정보를 기반으로 블로그 글을 작성해주세요.
 
-?ъ쭊 硫뷀??곗씠??
+사진 메타데이터:
 {metadata_str}
 
-?묒꽦 ?ㅽ???
+작성 스타일:
 {style_str}
 
-?쒖븞???쒕ぉ: {blog_title or '?먮룞 ?앹꽦'}
+제안된 제목: {blog_title or '자동 생성'}
 
-JSON ?뺤떇?쇰줈留??묐떟?댁＜?몄슂."""
+JSON 형식으로만 응답해주세요."""
 
         logger.info(
             "Generating blog post",
@@ -534,25 +537,25 @@ CONTENT:
         posts_str = "\n\n---POST BOUNDARY---\n\n".join(sample_posts)
         
         # System prompt for style analysis (Korean)
-        system_prompt = """?뱀떊? 湲?곌린 ?ㅽ???遺꾩꽍 ?꾨Ц媛?낅땲??
-釉붾줈洹??ъ뒪?몃? 遺꾩꽍?섏뿬 ?묒꽦 ?ㅽ????뱀꽦??異붿텧?⑸땲??
+        system_prompt = """당신은 글쓰기 스타일 분석 전문가입니다.
+블로그 포스트를 분석하여 작성 스타일 특성을 추출합니다.
 
-?묐떟 ?뺤떇:
-諛섎뱶???좏슚??JSON?쇰줈留??묐떟?섏꽭?? ?ㅻⅨ ?띿뒪?몃뒗 ?ы븿?섏? 留덉꽭??"""
+응답 형식:
+반드시 유효한 JSON으로만 응답하세요. 다른 텍스트는 포함하지 마세요."""
         
-        user_prompt = f"""?ㅼ쓬 釉붾줈洹??ъ뒪?몃뱾??遺꾩꽍?섍퀬 湲?곌린 ?ㅽ????뱀꽦??JSON?쇰줈 異붿텧?섏꽭??
+        user_prompt = f"""다음 블로그 포스트들을 분석하고 글쓰기 스타일 특성을 JSON으로 추출하세요:
 
-?ъ뒪??
+포스트:
 {posts_str}
 
-?ㅼ쓬 援ъ“??JSON?쇰줈 ?묐떟?섏꽭??
+다음 구조의 JSON으로 응답하세요:
 {{
     "vocabulary_patterns": {{
-        "common_words": ["?먯＜ ?ъ슜?섎뒗 10媛??⑥뼱"],
+        "common_words": ["자주 사용하는 10개 단어"],
         "style": "formal/casual/technical/conversational"
     }},
     "sentence_structure": {{
-        "avg_words_per_sentence": ?レ옄,
+        "avg_words_per_sentence": 숫자,
         "uses_short_sentences": true/false,
         "uses_complex_sentences": true/false,
         "passive_voice_frequency": "low/medium/high"
@@ -568,10 +571,10 @@ CONTENT:
         "uses_emojis": true/false,
         "heading_style": "minimal/moderate/extensive"
     }},
-    "characteristic_phrases": ["???묒꽦??怨좎쑀??5-10媛??쒗쁽"],
-    "avg_post_length_words": ?レ옄,
-    "keyword_frequencies": {{"二쇱슂_?ㅼ썙??: 鍮덈룄, "...": "..."}},
-    "overall_summary": "湲?곌린 ?ㅽ??쇱쓽 1-2臾몄옣 ?붿빟"
+    "characteristic_phrases": ["이 작성자 고유의 5-10개 표현"],
+    "avg_post_length_words": 숫자,
+    "keyword_frequencies": {{"주요_키워드": 빈도, "...": "..."}},
+    "overall_summary": "글쓰기 스타일의 1-2문장 요약"
 }}"""
 
         logger.info(

@@ -24,6 +24,7 @@ from app.utils.blog_scraper import BlogScraper
 from app.utils.s3_client import get_s3_client
 from app.utils.ai_client import get_ai_client
 from app.routers.photos import analyze_photo_record
+import markdown as markdown_lib
 
 logger = get_logger(__name__)
 
@@ -67,7 +68,8 @@ class GeneratePostRequest(BaseModel):
 class GeneratePostResponse(BaseModel):
     """Response with generated post."""
     title: str = Field(..., description="Generated post title")
-    content: str = Field(..., description="Generated post body content")
+    content: str = Field(..., description="Generated post body content (raw markdown)")
+    content_html: str = Field(..., description="Generated post body rendered as HTML for preview")
     word_count: int = Field(..., description="Word count of generated content")
     generated_at: str = Field(..., description="Generation timestamp")
 
@@ -202,10 +204,15 @@ async def generate_post_mvp(
         await db.commit()
         
         word_count = len(saved_post["body"].split())
+        content_html = markdown_lib.markdown(
+            saved_post["body"],
+            extensions=["extra", "sane_lists", "nl2br"],
+        )
         
         return GeneratePostResponse(
             title=saved_post["title"],
             content=saved_post["body"],
+            content_html=content_html,
             word_count=word_count,
             generated_at=saved_post["created_at"] if isinstance(saved_post["created_at"], str) else saved_post["created_at"].isoformat(),
         )

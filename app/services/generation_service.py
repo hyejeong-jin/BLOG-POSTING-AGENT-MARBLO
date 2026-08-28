@@ -132,6 +132,7 @@ class GenerationService:
                 max_length,
                 kwargs.get("category"),
                 kwargs.get("tone"),
+                posting_intent,
             )
             
             logger.debug(
@@ -152,23 +153,26 @@ class GenerationService:
                 # Step 6: Parse generated title and body
                 title, body = self._parse_generated_content(generated_content)
             
-            # Validate lengths
-            if len(body) < min_length:
+            # Validate lengths (excluding markdown image syntax, since images
+            # add visual content but don't count as "written" characters)
+            text_only_length = self._text_length_excluding_images(body)
+            
+            if text_only_length < min_length:
                 logger.warning(
                     "Generated body below minimum length",
                     user_id=str(user_id),
-                    body_length=len(body),
+                    body_length=text_only_length,
                     min_length=min_length,
                 )
             
-            if len(body) > max_length:
+            if text_only_length > max_length:
                 logger.warning(
                     "Generated body exceeds maximum length, truncating",
                     user_id=str(user_id),
-                    body_length=len(body),
+                    body_length=text_only_length,
                     max_length=max_length,
                 )
-                body = body[:max_length].rsplit(' ', 1)[0] + "..."
+                body = self._truncate_preserving_images(body, max_length)
             
             # Step 7: Build metadata snapshot for tracking
             metadata_snapshot = {
@@ -479,6 +483,7 @@ class GenerationService:
         max_length: int,
         category: Optional[str] = None,
         tone: Optional[str] = None,
+        posting_intent: Optional[Dict] = None,
     ) -> str:
         """
         Create the generation prompt for Claude with context and instructions.
@@ -490,40 +495,78 @@ class GenerationService:
             max_length: Maximum body length
             category: Optional category hint
             tone: Optional tone hint
+            posting_intent: Optional dict with user-provided topic/context that
+                MUST be reflected in the generated content (not ignored)
             
         Returns:
             Formatted prompt for Claude
         """
         style_instructions = self._build_style_instructions(style_profile)
         
+        # Build posting intent section - this is real user-provided context
+        # and must take priority over guessing/inventing content
+        intent_section = ""
+        if posting_intent:
+            intent_lines = ["\nSECTION 6: USER'S POSTING INTENT (HIGH PRIORITY)", "-" * 80]
+            if posting_intent.get("topic"):
+                intent_lines.append(f"Requested Topic: {posting_intent['topic']}")
+            if posting_intent.get("additional_context"):
+                intent_lines.append(f"Additional Context from User: {posting_intent['additional_context']}")
+            intent_section = "\n".join(intent_lines)
+        
         prompt = f"""You are an AI blog post generator. Your task is to generate a professional, 
-informative blog post based on the provided context and metadata.
+informative blog post based ONLY on the provided context and metadata below.
 
 {context_document}
+{intent_section}
 
 GENERATION INSTRUCTIONS:
 {style_instructions}
 
+CRITICAL ANTI-HALLUCINATION RULES:
+1. Use ONLY the facts given in the context document and posting intent above.
+2. If the user's posting intent (Section 6) is provided, the post MUST be about that
+   topic and MUST use that context as the primary source of truth.
+3. Do NOT invent details that are not present in the context (no fake prices, fake
+   locations, fake dates, fake product names, or fake scenery descriptions).
+4. If a piece of information (location, price, date) is marked as
+   "[Not specified]" or "[No description provided]", do NOT make one up.
+   Either omit that detail or write generically about it without inventing specifics.
+5. If the photos are screenshots of an application/website (e.g. UI screens, tables,
+   dashboards), describe them as what they actually show (feature, screen, data),
+   not as a nature/travel/lifestyle photo.
+
+IMAGE PLACEMENT REQUIREMENT:
+- Each photo listed in SECTION 1 has an S3 URL. You MUST insert every photo directly
+  into the body using markdown image syntax: ![short descriptive alt text](S3_URL)
+- Distribute the images throughout the body near the paragraph that discusses that
+  photo's content (not all at the top or all at the bottom).
+- Use the exact S3 URL given in SECTION 1, unmodified.
+
 REQUIREMENTS:
 1. Post Length: Generate a blog post body between {min_length} and {max_length} characters
+   (this count excludes the markdown image syntax itself)
 2. Content Quality: Ensure the post is informative, well-structured, and engaging
-3. Information Integration: Incorporate location, price, and description information where relevant
+3. Information Integration: Incorporate location, price, and description information
+   where it is actually available; do not fabricate what is missing
 4. Tone: Use the writing style specified above
-5. Structure: Organize content with clear paragraphs and logical flow
-6. Title: Create a compelling, descriptive title (50-100 characters)
-7. Format: Use clear markdown formatting with sections if appropriate
+5. Structure: Organize content with clear paragraphs and markdown headings
+   (use ##, ### for section titles so structure is visually clear)
+6. Title: Create a compelling, descriptive title (50-100 characters) that reflects
+   the actual topic/posting intent, not a generic guess
+7. Images: Follow the IMAGE PLACEMENT REQUIREMENT above
 
 RESPONSE FORMAT:
-Respond with ONLY valid JSON (no markdown code blocks). Use this exact structure:
+Respond with ONLY valid JSON (no markdown code blocks around the JSON itself). Use this
+exact structure:
 {{
     "title": "Your Blog Post Title Here",
-    "body": "Your full blog post body content here..."
+    "body": "Your full blog post body content here, including inline ![alt](url) images..."
 }}
 
 Notes:
 - The body must be between {min_length} and {max_length} characters
-- Ensure the JSON is valid and properly escaped
-- Include all relevant information from the context document
+- Ensure the JSON is valid and properly escaped (escape newlines as \\n, quotes as \\")
 - Match the writing style from Section 5 of the context document
 """
         
@@ -684,6 +727,73 @@ Notes:
                 error=str(e),
             )
             return None
+    
+    def _text_length_excluding_images(self, body: str) -> int:
+        """
+        Calculate body length excluding markdown image syntax.
+        
+        Markdown images (![alt](url)) add visual content to the post but
+        contain a lot of characters (URLs) that shouldn\'t count toward the
+        written-text length requirements.
+        
+        Args:
+            body: The post body, potentially containing markdown images
+            
+        Returns:
+            Character count of the body with image markdown removed
+        """
+        text_only = re.sub(r"!\[[^\]]*\]\([^)]*\)", "", body)
+        return len(text_only)
+    
+    def _truncate_preserving_images(self, body: str, max_length: int) -> str:
+        """
+        Truncate body to max_length (measured in non-image text) without
+        cutting a markdown image tag in half.
+        
+        Walks through the body, keeping track of the text-only character
+        count, and stops at the last complete unit (word or full image tag)
+        before exceeding max_length.
+        
+        Args:
+            body: The post body to truncate
+            max_length: Maximum allowed text-only length
+            
+        Returns:
+            Truncated body with all remaining image tags intact
+        """
+        image_pattern = re.compile(r"!\[[^\]]*\]\([^)]*\)")
+        
+        result_parts = []
+        text_count = 0
+        pos = 0
+        
+        for match in image_pattern.finditer(body):
+            # Handle the text segment before this image
+            segment = body[pos:match.start()]
+            if text_count + len(segment) > max_length:
+                remaining = max_length - text_count
+                truncated_segment = segment[:remaining].rsplit(" ", 1)[0]
+                result_parts.append(truncated_segment)
+                result_parts.append("...")
+                return "".join(result_parts)
+            result_parts.append(segment)
+            text_count += len(segment)
+            
+            # Keep the full image tag (doesn\'t count toward text length)
+            result_parts.append(match.group(0))
+            pos = match.end()
+        
+        # Handle any remaining text after the last image
+        segment = body[pos:]
+        if text_count + len(segment) > max_length:
+            remaining = max_length - text_count
+            truncated_segment = segment[:remaining].rsplit(" ", 1)[0]
+            result_parts.append(truncated_segment)
+            result_parts.append("...")
+        else:
+            result_parts.append(segment)
+        
+        return "".join(result_parts)
     
     def _parse_generated_content(self, content: str) -> tuple[str, str]:
         """

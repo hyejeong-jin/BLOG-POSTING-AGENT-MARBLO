@@ -64,6 +64,7 @@ dependencies = [
     "python-dateutil==2.8.2",
     "Pillow==10.1.0",  # Image processing
     "beautifulsoup4==4.12.2",  # HTML parsing for blog scraping
+    "markdown==3.5.1",  # Markdown to HTML rendering for post preview
 ]
 
 [project.optional-dependencies]
