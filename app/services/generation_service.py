@@ -673,6 +673,9 @@ Notes:
                 logger.error("Claude API returned None")
                 return None
             
+            # If response is a dict (parsed JSON), convert back to string for parsing
+            if isinstance(response, dict):
+                return json.dumps(response, ensure_ascii=False)
             return str(response)
         
         except Exception as e:
@@ -990,6 +993,7 @@ Notes:
             "keyword_frequency": {},
             "confidence_score": 30,
         }
+
 
 
 
